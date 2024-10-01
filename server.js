@@ -9,46 +9,46 @@ app.use(express.json());
 app.use(cors());
 app.use(morgan('dev'));
 
-// Временная "база данных" пользователей
+// Temporary "user database"
 const users = [];
 
 const SECRET_KEY = 'your_secret_key';
 
-// Регистрация пользователя
+// User registration
 app.post('/auth/register', async (req, res) => {
   const { username, password } = req.body;
 
-  // Проверим, есть ли уже пользователь с таким именем
+  // Check if a user with the same username already exists
   const existingUser = users.find((user) => user.username === username);
   if (existingUser) {
     return res.status(400).json({ message: 'User already exists' });
   }
 
-  // Хэшируем пароль перед сохранением
+  // Hash the password before saving
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  // Сохраним пользователя
+  // Save the user
   users.push({ username, password: hashedPassword });
   res.status(201).json({ message: 'User registered successfully' });
 });
 
-// Логин пользователя
+// User login
 app.post('/auth/login', async (req, res) => {
   const { username, password } = req.body;
 
-  // Ищем пользователя по имени
+  // Find the user by username
   const user = users.find((user) => user.username === username);
   if (!user) {
     return res.status(400).json({ message: 'Invalid credentials' });
   }
 
-  // Проверим пароль
+  // Check the password
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) {
     return res.status(400).json({ message: 'Invalid credentials' });
   }
 
-  // Генерируем JWT
+  // Generate JWT
   const token = jwt.sign({ username: user.username }, SECRET_KEY, {
     expiresIn: '1h',
   });
@@ -56,7 +56,7 @@ app.post('/auth/login', async (req, res) => {
   res.json({ message: 'Login successful', token });
 });
 
-// Миддлвар для проверки токена и существования пользователя в базе
+// Middleware to verify the token and check if the user exists in the database
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -76,7 +76,7 @@ const authenticateToken = (req, res, next) => {
       });
     }
 
-    // Проверяем, существует ли пользователь в базе данных
+    // Check if the user exists in the database
     const user = users.find((user) => user.username === decoded.username);
     if (!user) {
       return res.status(404).json({
@@ -85,29 +85,29 @@ const authenticateToken = (req, res, next) => {
       });
     }
 
-    // Сохраняем пользователя в req, чтобы использовать дальше
+    // Save the user in req for further use
     req.user = user;
     next();
   });
 };
 
-// Защищённый маршрут
+// Protected route
 app.get('/protected', authenticateToken, (req, res) => {
-  // Фильтруем данные пользователей, чтобы убрать пароли
+  // Filter user data to remove passwords
   const safeUsers = users.map((user) => ({
-    username: user.username, // Возвращаем только безопасные данные
+    username: user.username, // Return only safe data
   }));
 
   res.json({
     message: 'This is a protected route',
-    users: safeUsers, // Возвращаем список пользователей
+    users: safeUsers, // Return the list of users
   });
 });
 
 app.get('/', (req, res) => {
-  // Фильтруем данные пользователей, чтобы убрать пароли
+  // Filter user data to remove passwords
   const safeUsers = users.map((user) => ({
-    username: user.username, // Возвращаем только безопасные данные
+    username: user.username, // Return only safe data
   }));
 
   res.json(safeUsers);
