@@ -1,5 +1,5 @@
 # Указываем базовый образ
-FROM node:18
+FROM node:20-alpine
 
 # Создаём директорию для приложения
 WORKDIR /usr/app
