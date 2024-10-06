@@ -29,7 +29,11 @@ app.post('/auth/register', async (req, res) => {
 
   // Save the user
   users.push({ username, password: hashedPassword });
-  res.status(201).json({ message: 'User registered successfully' });
+
+  // Generate JWT
+  const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: '1h' });
+
+  res.status(201).json({ message: 'User registered successfully', token });
 });
 
 // User login
