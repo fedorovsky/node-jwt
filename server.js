@@ -16,10 +16,17 @@ const SECRET_KEY = 'your_secret_key';
 
 // User registration
 app.post('/auth/register', async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
-  // Check if a user with the same username already exists
-  const existingUser = users.find((user) => user.username === username);
+  console.log('email', email);
+
+  // Check if email is provided and valid
+  if (!email || !/\S+@\S+\.\S+/.test(email)) {
+    return res.status(400).json({ message: 'Valid email is required' });
+  }
+
+  // Check if a user with the same email already exists
+  const existingUser = users.find((user) => user.email === email);
   if (existingUser) {
     return res.status(400).json({ message: 'User already exists' });
   }
@@ -28,20 +35,21 @@ app.post('/auth/register', async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   // Save the user
-  users.push({ username, password: hashedPassword });
+  users.push({ email, password: hashedPassword });
 
   // Generate JWT
-  const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: '1h' });
+  const token = jwt.sign({ email }, SECRET_KEY, { expiresIn: '1h' });
 
   res.status(201).json({ message: 'User registered successfully', token });
 });
 
+
 // User login
 app.post('/auth/login', async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
-  // Find the user by username
-  const user = users.find((user) => user.username === username);
+  // Find the user by email
+  const user = users.find((user) => user.email === email);
   if (!user) {
     return res.status(400).json({ message: 'Invalid credentials' });
   }
@@ -53,7 +61,7 @@ app.post('/auth/login', async (req, res) => {
   }
 
   // Generate JWT
-  const token = jwt.sign({ username: user.username }, SECRET_KEY, {
+  const token = jwt.sign({ email: user.email }, SECRET_KEY, {
     expiresIn: '1h',
   });
 
@@ -81,7 +89,7 @@ const authenticateToken = (req, res, next) => {
     }
 
     // Check if the user exists in the database
-    const user = users.find((user) => user.username === decoded.username);
+    const user = users.find((user) => user.email === decoded.email);
     if (!user) {
       return res.status(404).json({
         error: 'Not Found',
@@ -99,7 +107,7 @@ const authenticateToken = (req, res, next) => {
 app.get('/protected', authenticateToken, (req, res) => {
   // Filter user data to remove passwords
   const safeUsers = users.map((user) => ({
-    username: user.username, // Return only safe data
+    email: user.email, // Return only safe data
   }));
 
   res.json({
@@ -111,7 +119,7 @@ app.get('/protected', authenticateToken, (req, res) => {
 app.get('/', (req, res) => {
   // Filter user data to remove passwords
   const safeUsers = users.map((user) => ({
-    username: user.username, // Return only safe data
+    email: user.email, // Return only safe data
   }));
 
   res.json(safeUsers);
