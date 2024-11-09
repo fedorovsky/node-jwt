@@ -40,6 +40,14 @@
 - **Description**: Fetches a list of all registered users, showing only safe data (e.g., emails).
 - **Response**: Returns a list of users (without passwords).
 
+## Postman
+The file `tools/postman.json` contains a pre-configured Postman collection for testing this API. To import it into Postman:
+
+1. Open Postman.
+2. Click on **Import** in the top left corner.
+3. Select **Upload Files** and choose `tools/postman.json`.
+4. The collection will be added, allowing you to test the API endpoints easily.
+
 ## Docker
 
 Build a Docker Image from the current directory with the name node-jwt-image
