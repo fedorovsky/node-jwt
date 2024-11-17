@@ -1,6 +1,6 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const { jwtVerify, SignJWT } = require('jose');
 const cors = require('cors');
 const morgan = require('morgan');
 
@@ -12,7 +12,21 @@ app.use(morgan('dev'));
 // Temporary "user database"
 const users = [];
 
-const SECRET_KEY = 'your_secret_key';
+const SECRET_KEY = Buffer.from('your_secret_key', 'utf-8');
+
+// Function to generate JWT
+const generateToken = async (payload) => {
+  return new SignJWT(payload)
+      .setProtectedHeader({ alg: 'HS256' })
+      .setExpirationTime('1h')
+      .sign(SECRET_KEY);
+};
+
+// Function to verify JWT
+const verifyToken = async (token) => {
+  const { payload } = await jwtVerify(token, SECRET_KEY);
+  return payload;
+};
 
 // User registration
 app.post('/auth/register', async (req, res) => {
@@ -38,11 +52,10 @@ app.post('/auth/register', async (req, res) => {
   users.push({ email, password: hashedPassword });
 
   // Generate JWT
-  const token = jwt.sign({ email }, SECRET_KEY, { expiresIn: '1h' });
+  const token = await generateToken({ email });
 
   res.status(201).json({ message: 'User registered successfully', token });
 });
-
 
 // User login
 app.post('/auth/login', async (req, res) => {
@@ -61,15 +74,13 @@ app.post('/auth/login', async (req, res) => {
   }
 
   // Generate JWT
-  const token = jwt.sign({ email: user.email }, SECRET_KEY, {
-    expiresIn: '1h',
-  });
+  const token = await generateToken({ email: user.email });
 
   res.json({ message: 'Login successful', token });
 });
 
 // Middleware to verify the token and check if the user exists in the database
-const authenticateToken = (req, res, next) => {
+const authenticateToken = async (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
@@ -80,13 +91,8 @@ const authenticateToken = (req, res, next) => {
     });
   }
 
-  jwt.verify(token, SECRET_KEY, (err, decoded) => {
-    if (err) {
-      return res.status(403).json({
-        error: 'Unauthorized',
-        message: 'Authentication token is invalid.',
-      });
-    }
+  try {
+    const decoded = await verifyToken(token);
 
     // Check if the user exists in the database
     const user = users.find((user) => user.email === decoded.email);
@@ -100,7 +106,12 @@ const authenticateToken = (req, res, next) => {
     // Save the user in req for further use
     req.user = user;
     next();
-  });
+  } catch (err) {
+    return res.status(403).json({
+      error: 'Unauthorized',
+      message: 'Authentication token is invalid.',
+    });
+  }
 };
 
 // Protected route
