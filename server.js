@@ -1,6 +1,6 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
-const { jwtVerify, SignJWT } = require('jose');
+const { jwtVerify, SignJWT, errors } = require('jose');
 const cors = require('cors');
 const morgan = require('morgan');
 
@@ -116,6 +116,13 @@ const authenticateToken = async (req, res, next) => {
     // Call the `next` function to pass control to the next middleware or route handler.
     next();
   } catch (err) {
+    if (err instanceof errors.JWTExpired) {
+      // Handle expired token
+      return res.status(401).json({
+        error: 'Token Expired',
+        message: 'The authentication token has expired. Please log in again.',
+      });
+    }
     // If an error occurs during token verification, return a 403 Forbidden response.
     return res.status(403).json({
       error: 'Unauthorized',
