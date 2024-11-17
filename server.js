@@ -1,6 +1,6 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
-const {jwtVerify, SignJWT} = require('jose');
+const { jwtVerify, SignJWT } = require('jose');
 const cors = require('cors');
 const morgan = require('morgan');
 
@@ -17,66 +17,66 @@ const SECRET_KEY = Buffer.from('your_secret_key', 'utf-8');
 // Function to generate JWT
 const generateToken = async (payload) => {
   return new SignJWT(payload)
-    .setProtectedHeader({alg: 'HS256'})
+    .setProtectedHeader({ alg: 'HS256' })
     .setExpirationTime('1h')
     .sign(SECRET_KEY);
 };
 
 // Function to verify JWT
 const verifyToken = async (token) => {
-  const {payload} = await jwtVerify(token, SECRET_KEY);
+  const { payload } = await jwtVerify(token, SECRET_KEY);
   return payload;
 };
 
 // User registration
 app.post('/auth/register', async (req, res) => {
-  const {email, password} = req.body;
+  const { email, password } = req.body;
 
   console.log('email', email);
 
   // Check if email is provided and valid
   if (!email || !/\S+@\S+\.\S+/.test(email)) {
-    return res.status(400).json({message: 'Valid email is required'});
+    return res.status(400).json({ message: 'Valid email is required' });
   }
 
   // Check if a user with the same email already exists
   const existingUser = users.find((user) => user.email === email);
   if (existingUser) {
-    return res.status(400).json({message: 'User already exists'});
+    return res.status(400).json({ message: 'User already exists' });
   }
 
   // Hash the password before saving
   const hashedPassword = await bcrypt.hash(password, 10);
 
   // Save the user
-  users.push({email, password: hashedPassword});
+  users.push({ email, password: hashedPassword });
 
   // Generate JWT
-  const token = await generateToken({email});
+  const token = await generateToken({ email });
 
-  res.status(201).json({message: 'User registered successfully', token});
+  res.status(201).json({ message: 'User registered successfully', token });
 });
 
 // User login
 app.post('/auth/login', async (req, res) => {
-  const {email, password} = req.body;
+  const { email, password } = req.body;
 
   // Find the user by email
   const user = users.find((user) => user.email === email);
   if (!user) {
-    return res.status(400).json({message: 'Invalid credentials'});
+    return res.status(400).json({ message: 'Invalid credentials' });
   }
 
   // Check the password
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) {
-    return res.status(400).json({message: 'Invalid credentials'});
+    return res.status(400).json({ message: 'Invalid credentials' });
   }
 
   // Generate JWT
-  const token = await generateToken({email: user.email});
+  const token = await generateToken({ email: user.email });
 
-  res.json({message: 'Login successful', token});
+  res.json({ message: 'Login successful', token });
 });
 
 // Middleware to verify the token and check if the user exists in the database
