@@ -22,17 +22,11 @@ const generateToken = async (payload) => {
     .sign(SECRET_KEY);
 };
 
-// Function to verify JWT
-const verifyToken = async (token) => {
-  const { payload } = await jwtVerify(token, SECRET_KEY);
-  return payload;
-};
-
-// User registration
+/**
+ * Registration
+ */
 app.post('/auth/register', async (req, res) => {
   const { email, password } = req.body;
-
-  console.log('email', email);
 
   // Check if email is provided and valid
   if (!email || !/\S+@\S+\.\S+/.test(email)) {
@@ -57,7 +51,9 @@ app.post('/auth/register', async (req, res) => {
   res.status(201).json({ message: 'User registered successfully', token });
 });
 
-// User login
+/**
+ * Login
+ */
 app.post('/auth/login', async (req, res) => {
   const { email, password } = req.body;
 
@@ -79,34 +75,48 @@ app.post('/auth/login', async (req, res) => {
   res.json({ message: 'Login successful', token });
 });
 
-// Middleware to verify the token and check if the user exists in the database
+/**
+ * Middleware to verify the token and check if the user exists in the database.
+ * Handles token authentication for incoming requests.
+ */
 const authenticateToken = async (req, res, next) => {
+  // Retrieve the 'Authorization' header from the request.
   const authHeader = req.headers['authorization'];
+
+  // Extract the token from the 'Authorization' header.
+  // The token is usually in the format "Bearer <token>", so we split by a space and take the second part.
   const token = authHeader && authHeader.split(' ')[1];
 
+  // If no token is found, return a 401 Unauthorized response with an error message.
   if (!token) {
     return res.status(401).json({
-      error: 'Unauthorized',
-      message: 'Authentication token is missing or invalid.',
+      error: 'Unauthorized', // Error type
+      message: 'Authentication token is missing or invalid.', // Explanation for the client
     });
   }
 
   try {
-    const decoded = await verifyToken(token);
+    const { payload } = await jwtVerify(token, SECRET_KEY);
 
-    // Check if the user exists in the database
-    const user = users.find((user) => user.email === decoded.email);
+    // Simulate checking if the user exists in the database.
+    // This example assumes `users` is an array of user objects, and we search for a match by email.
+    const user = users.find((user) => user.email === payload.email);
+
+    // If no user is found, return a 404 Not Found response with an appropriate error message.
     if (!user) {
       return res.status(404).json({
-        error: 'Not Found',
-        message: 'User not found.',
+        error: 'Not Found', // Error type
+        message: 'User not found.', // Explanation for the client
       });
     }
 
-    // Save the user in req for further use
+    // If the user is found, attach the user object to the `req` object for use in subsequent middleware/routes.
     req.user = user;
+
+    // Call the `next` function to pass control to the next middleware or route handler.
     next();
   } catch (err) {
+    // If an error occurs during token verification, return a 403 Forbidden response.
     return res.status(403).json({
       error: 'Unauthorized',
       message: 'Authentication token is invalid.',
