@@ -90,8 +90,8 @@ const authenticateToken = async (req, res, next) => {
   // If no token is found, return a 401 Unauthorized response with an error message.
   if (!token) {
     return res.status(401).json({
-      error: 'Unauthorized', // Error type
-      message: 'Authentication token is missing or invalid.', // Explanation for the client
+      error: 'Unauthorized',
+      message: 'Authentication token is missing or invalid.',
     });
   }
 
@@ -102,11 +102,14 @@ const authenticateToken = async (req, res, next) => {
     // This example assumes `users` is an array of user objects, and we search for a match by email.
     const user = users.find((user) => user.email === payload.email);
 
-    // If no user is found, return a 404 Not Found response with an appropriate error message.
+    // Check if the user exists in the database.
+    // If the user is not found, return a 401 Unauthorized response.
+    // This generic error message ensures no sensitive information
+    // (like whether the user exists) is exposed to the client.
     if (!user) {
-      return res.status(404).json({
-        error: 'Not Found', // Error type
-        message: 'User not found.', // Explanation for the client
+      return res.status(401).json({
+        error: 'Unauthorized',
+        message: 'Authentication failed.',
       });
     }
 
