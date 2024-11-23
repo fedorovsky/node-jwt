@@ -2,10 +2,19 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import "./App.css";
 
 function Home() {
+
+  const handleClick = async () => {
+    const response = await fetch('/api/');
+    console.log('==================');
+    console.log('response', await response.json());
+    console.log('==================');
+  }
+
   return (
     <div>
       <h1>Home Page</h1>
       <p>Welcome to the Home Page!</p>
+      <button onClick={handleClick}>fetch</button>
     </div>
   );
 }
