@@ -1,16 +1,21 @@
 ## Docker
 
-Build
+### Development
+```bash
+npm start
+```
+
+### Docker Build
 ```bash
 docker compose build
 ```
 
-Run
+### Docker Run
 ```bash
 docker compose up
 ```
 
-Build and Run
+### Docker Build and Run
 ```bash
 docker compose up --build
 ```
