@@ -1,24 +1,17 @@
 {
-  "name": "node-jwt",
+  "name": "jwt",
   "version": "1.0.0",
-  "description": "",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node server.js",
-    "format": "prettier --write ."
+    "start": "concurrently \"npm run start-client\" \"npm run start-server\"",
+    "start-client": "npm --prefix client run dev",
+    "start-server": "npm --prefix server run start"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "bcryptjs": "^2.4.3",
-    "cors": "^2.8.5",
-    "express": "^4.21.0",
-    "jose": "^5.9.6",
-    "jsonwebtoken": "^9.0.2",
-    "morgan": "^1.10.0"
-  },
+  "description": "",
   "devDependencies": {
-    "prettier": "3.3.3"
+    "concurrently": "^9.1.0"
   }
 }
