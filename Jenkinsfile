@@ -47,15 +47,4 @@ pipeline {
             }
         }
     }
-
-    post {
-        always {
-            // Очистка ресурсов в случае ошибок или завершения
-            script {
-                sh '''
-                docker-compose -f $DOCKER_COMPOSE_FILE down --volumes --remove-orphans || true
-                '''
-            }
-        }
-    }
 }
