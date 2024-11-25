@@ -25,4 +25,4 @@ docker compose up --build
 - The client will be available at [http://localhost:7373](http://localhost:7373).
 - The server will be available at [http://localhost:3000](http://localhost:3000).
 
-1
+2
