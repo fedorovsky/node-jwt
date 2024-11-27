@@ -14,7 +14,7 @@ function Home() {
 
   return (
     <div>
-      <h1>Home Page CI-2</h1>
+      <h1>Home Page CI-3</h1>
       <p>Welcome to the Home Page!</p>
       <button onClick={handleClick}>fetch</button>
     </div>
