@@ -8,8 +8,8 @@ pipeline {
     environment {
         DOCKER_COMPOSE_FILE = "docker-compose.yml"
         GIT_COMMIT_HASH = "${env.GIT_COMMIT}"
-        GITHUB_TOKEN = credentials('github-token') // ID токена из Jenkins Credentials
-        GITHUB_REPO = 'fedorovsky/node-jwt' // Ваш репозиторий
+        GITHUB_TOKEN = credentials('github-token')
+        GITHUB_REPO = 'fedorovsky/node-jwt'
     }
 
     stages {
