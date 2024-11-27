@@ -57,11 +57,14 @@ pipeline {
     }
     post {
         success {
-            setGitHubPullRequestStatus context: 'Build', state: 'SUCCESS', message: 'Build completed successfully!'
+            script {
+                githubNotify context: 'Build', status: 'SUCCESS', description: 'Build completed successfully!'
+            }
         }
         failure {
-            setGitHubPullRequestStatus context: 'Build', state: 'FAILURE', message: 'Build failed!'
+            script {
+                githubNotify context: 'Build', status: 'FAILURE', description: 'Build failed!'
+            }
         }
-    }
 }
 
