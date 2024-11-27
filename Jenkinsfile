@@ -66,5 +66,6 @@ pipeline {
                 githubNotify context: 'Build', status: 'FAILURE', description: 'Build failed!'
             }
         }
+    }
 }
 
