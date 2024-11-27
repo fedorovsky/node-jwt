@@ -4,7 +4,7 @@ services:
       context: ./client
       dockerfile: Dockerfile
       args:
-        GIT_COMMIT: docker-git-commit
+        GIT_COMMIT_HASH: docker-git-commit
     ports:
       - "7373:80" # Map port 80 in the container to port 8080 on the host
     depends_on:

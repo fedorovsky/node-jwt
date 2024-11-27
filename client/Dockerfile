@@ -2,10 +2,10 @@
 FROM node:18 AS build
 
 # Set build argument
-ARG GIT_COMMIT
+ARG GIT_COMMIT_HASH
 
 # Set API_KEY as an environment variable
-ENV VITE_GIT_COMMIT=${GIT_COMMIT}
+ENV VITE_GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
 
 # Set working directory
 WORKDIR /app

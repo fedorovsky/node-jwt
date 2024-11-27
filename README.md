@@ -7,7 +7,7 @@ npm start
 
 ### Docker Build with arg
 ```bash
-docker compose build --build-arg GIT_COMMIT="custom-git-commit"
+docker compose build --build-arg GIT_COMMIT_HASH="custom-git-commit"
 ```
 
 ### Docker Build
