@@ -11,6 +11,15 @@ pipeline {
     }
 
     stages {
+        stage('Debug Environment') {
+            steps {
+                script {
+                    sh 'echo "GIT_COMMIT_HASH: ${GIT_COMMIT_HASH}"'
+                    sh 'env | grep GIT_COMMIT_HASH || echo "GIT_COMMIT_HASH not set"'
+                }
+            }
+        }
+
         stage('Checkout') {
             steps {
                 // Проверить код из репозитория
@@ -39,7 +48,6 @@ pipeline {
             steps {
                 // Собрать образы
                 script {
-                    export GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
                     sh 'docker-compose -f $DOCKER_COMPOSE_FILE build'
                 }
             }
