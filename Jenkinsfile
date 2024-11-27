@@ -55,5 +55,13 @@ pipeline {
             }
         }
     }
+    post {
+        success {
+            setGitHubPullRequestStatus context: 'Build', state: 'SUCCESS', message: 'Build completed successfully!'
+        }
+        failure {
+            setGitHubPullRequestStatus context: 'Build', state: 'FAILURE', message: 'Build failed!'
+        }
+    }
 }
 
