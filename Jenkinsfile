@@ -21,6 +21,26 @@ pipeline {
             }
         }
 
+        stage('Notify GitHub (Build in Progress)') {
+            steps {
+                script {
+                    def commitSHA = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
+                    sh """
+                        curl -X POST \
+                        -H "Authorization: token ${GITHUB_TOKEN}" \
+                        -H "Accept: application/vnd.github+json" \
+                        -d '{
+                            "state": "pending",
+                            "target_url": "${env.BUILD_URL}",
+                            "description": "Build is in progress",
+                            "context": "Jenkins Build"
+                        }' \
+                        https://api.github.com/repos/${GITHUB_REPO}/statuses/${commitSHA}
+                    """
+                }
+            }
+        }
+
         stage('Stop Previous Containers') {
             steps {
                 script {
