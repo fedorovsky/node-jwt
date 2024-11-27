@@ -1,6 +1,12 @@
 # Base image
 FROM node:18 AS build
 
+# Set build argument
+ARG GIT_COMMIT
+
+# Set API_KEY as an environment variable
+ENV VITE_GIT_COMMIT=${GIT_COMMIT}
+
 # Set working directory
 WORKDIR /app
 
