@@ -1,8 +1,8 @@
-const express = require('express');
-const bcrypt = require('bcryptjs');
-const { jwtVerify, SignJWT, errors } = require('jose');
-const cors = require('cors');
-const morgan = require('morgan');
+import express from 'express';
+import bcrypt from 'bcryptjs';
+import { jwtVerify, SignJWT, errors } from 'jose';
+import cors from 'cors';
+import morgan from 'morgan';
 
 const app = express();
 app.use(express.json());
