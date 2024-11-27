@@ -7,6 +7,7 @@ pipeline {
 
     environment {
         DOCKER_COMPOSE_FILE = "docker-compose.yml"
+        GIT_COMMIT_HASH = "${env.GIT_COMMIT}"
     }
 
     stages {
@@ -14,6 +15,7 @@ pipeline {
             steps {
                 // Проверить код из репозитория
                 checkout scm
+                echo "Git Commit: ${env.GIT_COMMIT}"
             }
         }
 
