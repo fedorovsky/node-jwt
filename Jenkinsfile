@@ -55,17 +55,5 @@ pipeline {
             }
         }
     }
-        post {
-            success {
-                script {
-                    githubNotify context: 'Build', status: 'SUCCESS', description: 'Build completed successfully!'
-                }
-            }
-            failure {
-                script {
-                    githubNotify context: 'Build', status: 'FAILURE', description: 'Build failed!'
-                }
-            }
-        }
 }
 
