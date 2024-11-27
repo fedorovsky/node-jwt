@@ -3,18 +3,19 @@ import bcrypt from 'bcryptjs';
 import { jwtVerify, SignJWT, errors } from 'jose';
 import cors from 'cors';
 import morgan from 'morgan';
+import { JSONFilePreset } from 'lowdb/node';
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(morgan('dev'));
 
-// Temporary "user database"
-const users = [];
+// Initialize the database with initial data
+const db = await JSONFilePreset('db.json', { users: [] });
 
 const SECRET_KEY = Buffer.from('your_secret_key', 'utf-8');
 
-// Function to generate JWT
+// Function to generate a JWT
 const generateToken = async (payload) => {
   return new SignJWT(payload)
     .setProtectedHeader({ alg: 'HS256' })
@@ -28,22 +29,23 @@ const generateToken = async (payload) => {
 app.post('/auth/register', async (req, res) => {
   const { email, password } = req.body;
 
-  // Check if email is provided and valid
+  // Validate email
   if (!email || !/\S+@\S+\.\S+/.test(email)) {
     return res.status(400).json({ message: 'Valid email is required' });
   }
 
-  // Check if a user with the same email already exists
-  const existingUser = users.find((user) => user.email === email);
+  // Check if user already exists
+  const existingUser = db.data.users.find((user) => user.email === email);
   if (existingUser) {
     return res.status(400).json({ message: 'User already exists' });
   }
 
-  // Hash the password before saving
+  // Hash the password
   const hashedPassword = await bcrypt.hash(password, 10);
 
   // Save the user
-  users.push({ email, password: hashedPassword });
+  db.data.users.push({ email, password: hashedPassword });
+  await db.write();
 
   // Generate JWT
   const token = await generateToken({ email });
@@ -57,13 +59,13 @@ app.post('/auth/register', async (req, res) => {
 app.post('/auth/login', async (req, res) => {
   const { email, password } = req.body;
 
-  // Find the user by email
-  const user = users.find((user) => user.email === email);
+  // Find the user
+  const user = db.data.users.find((user) => user.email === email);
   if (!user) {
     return res.status(400).json({ message: 'Invalid credentials' });
   }
 
-  // Check the password
+  // Validate the password
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) {
     return res.status(400).json({ message: 'Invalid credentials' });
@@ -76,18 +78,12 @@ app.post('/auth/login', async (req, res) => {
 });
 
 /**
- * Middleware to verify the token and check if the user exists in the database.
- * Handles token authentication for incoming requests.
+ * Middleware for token verification
  */
 const authenticateToken = async (req, res, next) => {
-  // Retrieve the 'Authorization' header from the request.
   const authHeader = req.headers['authorization'];
-
-  // Extract the token from the 'Authorization' header.
-  // The token is usually in the format "Bearer <token>", so we split by a space and take the second part.
   const token = authHeader && authHeader.split(' ')[1];
 
-  // If no token is found, return a 401 Unauthorized response with an error message.
   if (!token) {
     return res.status(401).json({
       error: 'Unauthorized',
@@ -97,15 +93,8 @@ const authenticateToken = async (req, res, next) => {
 
   try {
     const { payload } = await jwtVerify(token, SECRET_KEY);
+    const user = db.data.users.find((user) => user.email === payload.email);
 
-    // Simulate checking if the user exists in the database.
-    // This example assumes `users` is an array of user objects, and we search for a match by email.
-    const user = users.find((user) => user.email === payload.email);
-
-    // Check if the user exists in the database.
-    // If the user is not found, return a 401 Unauthorized response.
-    // This generic error message ensures no sensitive information
-    // (like whether the user exists) is exposed to the client.
     if (!user) {
       return res.status(401).json({
         error: 'Unauthorized',
@@ -113,20 +102,15 @@ const authenticateToken = async (req, res, next) => {
       });
     }
 
-    // If the user is found, attach the user object to the `req` object for use in subsequent middleware/routes.
     req.user = user;
-
-    // Call the `next` function to pass control to the next middleware or route handler.
     next();
   } catch (err) {
     if (err instanceof errors.JWTExpired) {
-      // Handle expired token
       return res.status(401).json({
         error: 'Token Expired',
         message: 'The authentication token has expired. Please log in again.',
       });
     }
-    // If an error occurs during token verification, return a 403 Forbidden response.
     return res.status(403).json({
       error: 'Unauthorized',
       message: 'Authentication token is invalid.',
@@ -136,21 +120,19 @@ const authenticateToken = async (req, res, next) => {
 
 // Protected route
 app.get('/protected', authenticateToken, (req, res) => {
-  // Filter user data to remove passwords
-  const safeUsers = users.map((user) => ({
-    email: user.email, // Return only safe data
+  const safeUsers = db.data.users.map((user) => ({
+    email: user.email,
   }));
 
   res.json({
     message: 'This is a protected route',
-    users: safeUsers, // Return the list of users
+    users: safeUsers,
   });
 });
 
 app.get('/', (req, res) => {
-  // Filter user data to remove passwords
-  const safeUsers = users.map((user) => ({
-    email: user.email, // Return only safe data
+  const safeUsers = db.data.users.map((user) => ({
+    email: user.email,
   }));
 
   res.json(safeUsers);
