@@ -39,6 +39,7 @@ pipeline {
             steps {
                 // Собрать образы
                 script {
+                    export GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
                     sh 'docker-compose -f $DOCKER_COMPOSE_FILE build'
                 }
             }
