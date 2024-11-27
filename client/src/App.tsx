@@ -3,6 +3,8 @@ import "./App.css";
 
 function Home() {
 
+  console.log('VITE_GIT_COMMIT', import.meta.env.VITE_GIT_COMMIT);
+
   const handleClick = async () => {
     const response = await fetch('/api/');
     console.log('==================');
