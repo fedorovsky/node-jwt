@@ -8,6 +8,8 @@ pipeline {
     environment {
         DOCKER_COMPOSE_FILE = "docker-compose.yml"
         GIT_COMMIT_HASH = "${env.GIT_COMMIT}"
+        GITHUB_TOKEN = credentials('github-token') // ID токена из Jenkins Credentials
+        GITHUB_REPO = 'fedorovsky/node-jwt' // Ваш репозиторий
     }
 
     stages {
@@ -58,12 +60,36 @@ pipeline {
     post {
         success {
             script {
-                githubNotify context: 'Build', status: 'SUCCESS', description: 'Build completed successfully!'
+                def commitSHA = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
+                sh """
+                    curl -X POST \
+                    -H "Authorization: token ${GITHUB_TOKEN}" \
+                    -H "Accept: application/vnd.github+json" \
+                    -d '{
+                        "state": "success",
+                        "target_url": "${env.BUILD_URL}",
+                        "description": "Build completed successfully",
+                        "context": "Jenkins Build"
+                    }' \
+                    https://api.github.com/repos/${GITHUB_REPO}/statuses/${commitSHA}
+                """
             }
         }
         failure {
             script {
-                githubNotify context: 'Build', status: 'FAILURE', description: 'Build failed!'
+                def commitSHA = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
+                sh """
+                    curl -X POST \
+                    -H "Authorization: token ${GITHUB_TOKEN}" \
+                    -H "Accept: application/vnd.github+json" \
+                    -d '{
+                        "state": "failure",
+                        "target_url": "${env.BUILD_URL}",
+                        "description": "Build failed",
+                        "context": "Jenkins Build"
+                    }' \
+                    https://api.github.com/repos/${GITHUB_REPO}/statuses/${commitSHA}
+                """
             }
         }
     }
