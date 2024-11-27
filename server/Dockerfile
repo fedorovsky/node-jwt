@@ -11,10 +11,10 @@ COPY package*.json ./
 RUN npm install
 
 # Копируем весь исходный код в рабочую директорию
-COPY server.js ./
+COPY server.mjs ./
 
 # Открываем порт, который будет использоваться приложением
 EXPOSE 3000
 
 # Команда для запуска приложения
-CMD [ "node", "server.js" ]
+CMD [ "node", "server.mjs" ]
