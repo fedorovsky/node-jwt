@@ -1,38 +1,15 @@
-import { Link } from 'react-router-dom';
 import { RootRoutes } from '../routes/root-routes';
-
-function Navigation() {
-	return (
-		<nav>
-			<ul>
-				<li>
-					<Link to="/">home</Link>
-				</li>
-				<li>
-					<Link to="/profile">profile</Link>
-				</li>
-				<li>
-					<Link to="/auth">auth</Link>
-					<ul>
-						<li>
-							<Link to="/auth/login">auth-login</Link>
-						</li>
-						<li>
-							<Link to="/auth/register">auth-register</Link>
-						</li>
-					</ul>
-				</li>
-			</ul>
-		</nav>
-	);
-}
+import { Header } from '@/features/root/components/header';
+import { Footer } from '@/features/root/components/footer';
 
 export const RootPage = () => {
 	return (
-		<div>
-			<h1>RootPage</h1>
-			<Navigation />
-			<RootRoutes />
+		<div className="min-h-screen flex flex-col">
+			<Header />
+			<main className="flex-grow container mx-auto py-4">
+				<RootRoutes />
+			</main>
+			<Footer />
 		</div>
 	);
 };
