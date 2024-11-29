@@ -1,4 +1,4 @@
-export const AuthRegister = () => {
+export const AuthRegisterPage = () => {
 	return (
 		<div>
 			<h2>AuthRegister</h2>

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { RootRoutes } from '../routes/root-routes.tsx';
+import { RootRoutes } from '../routes/root-routes';
 
 function Navigation() {
 	return (

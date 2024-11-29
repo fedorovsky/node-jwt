@@ -1,14 +1,14 @@
 import { Routes, Route } from 'react-router-dom';
-import { Home } from '../../home/pages/home.tsx';
-import { Profile } from '../../profile/pages/profile.tsx';
-import { AuthRoutes } from '../../auth/routes/auth-routes.tsx';
+import { HomePage } from '@/features/home';
+import { ProfileRoutes } from '@/features/profile';
+import { AuthRoutes } from '@/features/auth';
 
 export const RootRoutes = () => {
 	return (
 		<Routes>
-			<Route path="/" element={<Home />} />
+			<Route path="/" element={<HomePage />} />
 			<Route path="/auth/*" element={<AuthRoutes />} />
-			<Route path="/profile/*" element={<Profile />} />
+			<Route path="/profile/*" element={<ProfileRoutes />} />
 		</Routes>
 	);
 };

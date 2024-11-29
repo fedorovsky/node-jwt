@@ -1,4 +1,4 @@
-export const Home = () => {
+export const HomePage = () => {
 	const handleClick = async () => {
 		const response = await fetch('/api/');
 		console.log('==================');

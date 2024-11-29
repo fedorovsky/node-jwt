@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom';
 
-export const Auth = () => {
+export const AuthPage = () => {
 	return (
 		<div>
 			<h1>Auth</h1>

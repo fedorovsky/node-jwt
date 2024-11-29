@@ -1,14 +1,14 @@
 import { Routes, Route } from 'react-router-dom';
-import { AuthLogin } from '../pages/auth-login.tsx';
-import { AuthRegister } from '../pages/auth-register.tsx';
-import { Auth } from '../pages/auth.tsx';
+import { AuthLoginPage } from '../pages/auth-login-page';
+import { AuthRegisterPage } from '../pages/auth-register-page';
+import { AuthPage } from '../pages/auth-page';
 
 export const AuthRoutes = () => {
 	return (
 		<Routes>
-			<Route path="/" element={<Auth />}>
-				<Route path="login" element={<AuthLogin />} />
-				<Route path="register" element={<AuthRegister />} />
+			<Route path="/" element={<AuthPage />}>
+				<Route path="login" element={<AuthLoginPage />} />
+				<Route path="register" element={<AuthRegisterPage />} />
 			</Route>
 		</Routes>
 	);
