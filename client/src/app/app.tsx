@@ -1,5 +1,13 @@
-import { RootRoutes } from './routes.tsx';
+import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import { RootPage } from '../features/root';
 
 export function App() {
-	return <RootRoutes />;
+	return (
+		<React.StrictMode>
+			<BrowserRouter>
+				<RootPage />
+			</BrowserRouter>
+		</React.StrictMode>
+	);
 }
