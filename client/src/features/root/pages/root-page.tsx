@@ -4,12 +4,16 @@ import { Footer } from '@/features/root/components/footer';
 
 export const RootPage = () => {
 	return (
-		<div className="min-h-screen flex flex-col">
-			<Header />
-			<main className="flex-grow container mx-auto py-4">
+		<div className="flex flex-col h-screen">
+			<header className="bg-gray-800 text-white">
+				<Header />
+			</header>
+			<main className="flex-1 overflow-y-auto p-5">
 				<RootRoutes />
 			</main>
-			<Footer />
+			<footer className="bg-gray-800 text-white py-4">
+				<Footer />
+			</footer>
 		</div>
 	);
 };
