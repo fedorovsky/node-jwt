@@ -3,7 +3,7 @@ export const AuthLoginPage = () => {
 		<div className="flex items-center justify-center">
 			<form
 				onSubmit={() => null}
-				className="w-full max-w-sm bg-white p-6 rounded-lg shadow-md"
+				className="w-full max-w-sm bg-white p-6 rounded-lg border border-gray-300"
 			>
 				<h2 className="text-2xl font-bold text-gray-700 text-center mb-4">
 					Login
@@ -40,7 +40,7 @@ export const AuthLoginPage = () => {
 				</div>
 				<button
 					type="submit"
-					className="w-full px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
+					className="w-full px-4 py-2 text-white bg-gray-800 rounded-lg hover:bg-gray-600 focus:outline-none focus:ring focus:ring-gray-300"
 				>
 					Login
 				</button>
