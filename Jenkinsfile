@@ -57,6 +57,22 @@ pipeline {
             }
         }
 
+        stage('Prepare Database File') {
+            steps {
+                script {
+                    // Проверяем наличие database.db и создаем его, если отсутствует
+                    sh '''
+                    if [ ! -f database.db ]; then
+                        echo "Creating database.db..."
+                        touch database.db
+                    else
+                        echo "database.db already exists."
+                    fi
+                    '''
+                }
+            }
+        }
+
         stage('Build Images') {
             steps {
                 // Собрать образы

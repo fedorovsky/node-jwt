@@ -18,3 +18,5 @@ services:
       - "3000:3000" # Map port 3000 in the container to port 3000 on the host
     environment:
       - PORT=3000
+    volumes:
+      - ./database.db:/usr/app/database.db:delegated
