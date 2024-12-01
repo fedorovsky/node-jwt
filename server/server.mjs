@@ -3,17 +3,35 @@ import bcrypt from 'bcryptjs';
 import { jwtVerify, SignJWT, errors } from 'jose';
 import cors from 'cors';
 import morgan from 'morgan';
-import { JSONFilePreset } from 'lowdb/node';
+import sqlite3 from 'sqlite3';
+import { open } from 'sqlite';
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(morgan('dev'));
 
-// Initialize the database with initial data
-const db = await JSONFilePreset('db.json', { users: [] });
-
 const SECRET_KEY = Buffer.from('your_secret_key', 'utf-8');
+
+// Open the SQLite database
+const dbPromise = open({
+  filename: 'database.db',
+  driver: sqlite3.Database,
+});
+
+// Initialize database
+const initializeDatabase = async () => {
+  const db = await dbPromise;
+
+  // Create the users table if it doesn't exist
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      email TEXT UNIQUE NOT NULL,
+      password TEXT NOT NULL
+    );
+  `);
+};
 
 // Function to generate a JWT
 const generateToken = async (payload) => {
@@ -22,6 +40,9 @@ const generateToken = async (payload) => {
     .setExpirationTime('1h')
     .sign(SECRET_KEY);
 };
+
+// Initialize database on server startup
+initializeDatabase();
 
 /**
  * Registration
@@ -34,23 +55,34 @@ app.post('/auth/register', async (req, res) => {
     return res.status(400).json({ message: 'Valid email is required' });
   }
 
-  // Check if user already exists
-  const existingUser = db.data.users.find((user) => user.email === email);
-  if (existingUser) {
-    return res.status(400).json({ message: 'User already exists' });
+  const db = await dbPromise;
+
+  try {
+    // Check if user already exists
+    const existingUser = await db.get('SELECT * FROM users WHERE email = ?', [
+      email,
+    ]);
+    if (existingUser) {
+      return res.status(400).json({ message: 'User already exists' });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Save the user
+    await db.run('INSERT INTO users (email, password) VALUES (?, ?)', [
+      email,
+      hashedPassword,
+    ]);
+
+    // Generate JWT
+    const token = await generateToken({ email });
+
+    res.status(201).json({ message: 'User registered successfully', token });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred during registration' });
   }
-
-  // Hash the password
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  // Save the user
-  db.data.users.push({ email, password: hashedPassword });
-  await db.write();
-
-  // Generate JWT
-  const token = await generateToken({ email });
-
-  res.status(201).json({ message: 'User registered successfully', token });
 });
 
 /**
@@ -59,22 +91,29 @@ app.post('/auth/register', async (req, res) => {
 app.post('/auth/login', async (req, res) => {
   const { email, password } = req.body;
 
-  // Find the user
-  const user = db.data.users.find((user) => user.email === email);
-  if (!user) {
-    return res.status(400).json({ message: 'Invalid credentials' });
+  const db = await dbPromise;
+
+  try {
+    // Find the user
+    const user = await db.get('SELECT * FROM users WHERE email = ?', [email]);
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
+
+    // Validate the password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
+
+    // Generate JWT
+    const token = await generateToken({ email: user.email });
+
+    res.json({ message: 'Login successful', token });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred during login' });
   }
-
-  // Validate the password
-  const isPasswordValid = await bcrypt.compare(password, user.password);
-  if (!isPasswordValid) {
-    return res.status(400).json({ message: 'Invalid credentials' });
-  }
-
-  // Generate JWT
-  const token = await generateToken({ email: user.email });
-
-  res.json({ message: 'Login successful', token });
 });
 
 /**
@@ -93,7 +132,10 @@ const authenticateToken = async (req, res, next) => {
 
   try {
     const { payload } = await jwtVerify(token, SECRET_KEY);
-    const user = db.data.users.find((user) => user.email === payload.email);
+    const db = await dbPromise;
+    const user = await db.get('SELECT * FROM users WHERE email = ?', [
+      payload.email,
+    ]);
 
     if (!user) {
       return res.status(401).json({
@@ -119,23 +161,21 @@ const authenticateToken = async (req, res, next) => {
 };
 
 // Protected route
-app.get('/protected', authenticateToken, (req, res) => {
-  const safeUsers = db.data.users.map((user) => ({
-    email: user.email,
-  }));
+app.get('/protected', authenticateToken, async (req, res) => {
+  const db = await dbPromise;
+  const users = await db.all('SELECT email FROM users');
 
   res.json({
     message: 'This is a protected route',
-    users: safeUsers,
+    users,
   });
 });
 
-app.get('/', (req, res) => {
-  const safeUsers = db.data.users.map((user) => ({
-    email: user.email,
-  }));
+app.get('/', async (req, res) => {
+  const db = await dbPromise;
+  const users = await db.all('SELECT email FROM users');
 
-  res.json(safeUsers);
+  res.json(users);
 });
 
 app.listen(3000, () => {

@@ -5,8 +5,7 @@
   "main": "server.mjs",
   "type": "module",
   "scripts": {
-    "start": "node server.mjs",
-    "format": "../node_modules/.bin/prettier --write ."
+    "start": "node server.mjs"
   },
   "keywords": [],
   "author": "",
@@ -18,7 +17,9 @@
     "jose": "^5.9.6",
     "jsonwebtoken": "^9.0.2",
     "lowdb": "^7.0.1",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
     "prettier": "3.4.1"
