@@ -24,6 +24,8 @@ docker compose up
 ```bash
 docker compose up --build
 ```
+Before building and running the Docker container, you need to manually create a `database.db` file. This step ensures that the Docker volume correctly maps to the file system and the application can access the database.
+
 
 ## Checking the Work:
 
