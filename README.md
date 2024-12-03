@@ -1,9 +1,25 @@
-## Docker
-
-### Development
+## Development
 ```bash
 npm start
 ```
+Runs both the client-side and server-side of the application in development mode, enabling live updates during development. Here's a breakdown:
+
+### Client-side
+- **Framework**: React  
+- **Tooling**: Vite (for fast development with Hot Module Replacement - HMR)  
+- **Language**: TypeScript  
+
+Theclient-side handles UI updates and provides an efficient development workflow.
+
+### Server-side
+- **Runtime**: Node.js  
+- **Framework**: Express (for server logic and API handling)  
+- **Database**: SQLite (a lightweight, file-based database)  
+
+This setup provides an integrated environment for seamless frontend and backend development.
+
+
+## Docker
 
 ### Docker Build with arg
 ```bash
