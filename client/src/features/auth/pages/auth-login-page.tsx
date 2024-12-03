@@ -1,8 +1,28 @@
+import { SubmitHandler, useForm } from 'react-hook-form';
+
+// Интерфейс для данных формы
+interface FormValues {
+  email: string;
+  password: string;
+}
+
 export const AuthLoginPage = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<FormValues>();
+
+  // Обработчик отправки данных
+  const onSubmit: SubmitHandler<FormValues> = (data) => {
+    console.log('Form Data:', data);
+  };
+
   return (
     <div className='flex items-center justify-center'>
       <form
-        onSubmit={() => null}
+        onSubmit={handleSubmit(onSubmit)}
+        noValidate
         className='w-full max-w-sm bg-white p-6 rounded-lg border border-gray-300'
       >
         <h2 className='text-2xl font-bold text-gray-700 text-center mb-4'>Login</h2>
@@ -15,8 +35,15 @@ export const AuthLoginPage = () => {
             id='email'
             placeholder='Enter your email'
             className='w-full mt-1 px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300'
-            required
+            {...register('email', {
+              required: 'Email is required',
+              pattern: {
+                value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                message: 'Invalid email format'
+              }
+            })}
           />
+          {errors.email && <p className='text-sm text-red-500 mt-1'>{errors.email.message}</p>}
         </div>
         <div className='mb-4'>
           <label htmlFor='password' className='block text-sm font-medium text-gray-600'>
@@ -27,8 +54,17 @@ export const AuthLoginPage = () => {
             id='password'
             placeholder='Enter your password'
             className='w-full mt-1 px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300'
-            required
+            {...register('password', {
+              required: 'Password is required',
+              minLength: {
+                value: 6,
+                message: 'Password must be at least 6 characters'
+              }
+            })}
           />
+          {errors.password && (
+            <p className='text-sm text-red-500 mt-1'>{errors.password.message}</p>
+          )}
         </div>
         <button
           type='submit'
