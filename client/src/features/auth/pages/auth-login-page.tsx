@@ -1,4 +1,14 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { Input } from '@/shared/components/ui/input.tsx';
+import { Label } from '@/shared/components/ui/label.tsx';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter
+} from '@/shared/components/ui/card.tsx';
+import { Button } from '@/shared/components/ui/button.tsx';
 
 // Интерфейс для данных формы
 interface FormValues {
@@ -20,65 +30,60 @@ export const AuthLoginPage = () => {
 
   return (
     <div className='flex items-center justify-center'>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        noValidate
-        className='w-full max-w-sm bg-white p-6 rounded-lg border border-gray-300'
-      >
-        <h2 className='text-2xl font-bold text-gray-700 text-center mb-4'>Login</h2>
-        <div className='mb-4'>
-          <label htmlFor='email' className='block text-sm font-medium text-gray-600'>
-            Email
-          </label>
-          <input
-            type='email'
-            id='email'
-            placeholder='Enter your email'
-            className='w-full mt-1 px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300'
-            {...register('email', {
-              required: 'Email is required',
-              pattern: {
-                value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-                message: 'Invalid email format'
-              }
-            })}
-          />
-          {errors.email && <p className='text-sm text-red-500 mt-1'>{errors.email.message}</p>}
-        </div>
-        <div className='mb-4'>
-          <label htmlFor='password' className='block text-sm font-medium text-gray-600'>
-            Password
-          </label>
-          <input
-            type='password'
-            id='password'
-            placeholder='Enter your password'
-            className='w-full mt-1 px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300'
-            {...register('password', {
-              required: 'Password is required',
-              minLength: {
-                value: 6,
-                message: 'Password must be at least 6 characters'
-              }
-            })}
-          />
-          {errors.password && (
-            <p className='text-sm text-red-500 mt-1'>{errors.password.message}</p>
-          )}
-        </div>
-        <button
-          type='submit'
-          className='w-full px-4 py-2 text-white bg-gray-800 rounded-lg hover:bg-gray-600 focus:outline-none focus:ring focus:ring-gray-300'
-        >
-          Login
-        </button>
-        <p className='text-sm text-gray-600 text-center mt-4'>
-          Don't have an account?{' '}
-          <a href='#' className='text-blue-500 hover:underline'>
-            Register
-          </a>
-        </p>
-      </form>
+      <Card>
+        <CardHeader>
+          <CardTitle>Login</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)} noValidate>
+            <div className='mb-4'>
+              <Label htmlFor='email'>Email</Label>
+              <Input
+                type='email'
+                id='email'
+                placeholder='Enter your email'
+                {...register('email', {
+                  required: 'Email is required',
+                  pattern: {
+                    value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                    message: 'Invalid email format'
+                  }
+                })}
+              ></Input>
+              {errors.email && <p className='text-sm text-red-500 mt-1'>{errors.email.message}</p>}
+            </div>
+            <div className='mb-4'>
+              <Label htmlFor='password'>Password</Label>
+              <Input
+                type='password'
+                id='password'
+                placeholder='Enter your password'
+                {...register('password', {
+                  required: 'Password is required',
+                  minLength: {
+                    value: 6,
+                    message: 'Password must be at least 6 characters'
+                  }
+                })}
+              />
+              {errors.password && (
+                <p className='text-sm text-red-500 mt-1'>{errors.password.message}</p>
+              )}
+            </div>
+            <Button type='submit' className='w-full'>
+              Login
+            </Button>
+          </form>
+        </CardContent>
+        <CardFooter>
+          <p>
+            Don't have an account?{' '}
+            <a href='#' className='text-blue-500 hover:underline'>
+              Register
+            </a>
+          </p>
+        </CardFooter>
+      </Card>
     </div>
   );
 };
