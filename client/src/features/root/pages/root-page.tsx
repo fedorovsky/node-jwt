@@ -11,7 +11,7 @@ export const RootPage = () => {
       <main className='flex-1 overflow-y-auto p-5'>
         <RootRoutes />
       </main>
-      <footer className='bg-gray-800 text-white py-4'>
+      <footer className='bg-primary text-white py-4'>
         <Footer />
       </footer>
     </div>
