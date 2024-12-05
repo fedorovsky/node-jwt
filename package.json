@@ -6,9 +6,7 @@
     "start": "concurrently \"npm run start-client\" \"npm run start-server\"",
     "start-client": "npm --prefix client run dev",
     "start-server": "npm --prefix server run start",
-    "install-dependencies": "concurrently \"npm run install-client-dependencies\" \"npm run install-server-dependencies\"",
-    "install-client-dependencies": "npm --prefix client install",
-    "install-server-dependencies": "npm --prefix server install"
+    "postinstall": "npm --prefix client install && npm --prefix server install"
   },
   "keywords": [],
   "author": "",
