@@ -1,2 +1,2 @@
-export * from './slices/auth-slice';
 export { AuthRoutes } from './routes/auth-routes';
+export * as authModule from './redux';
