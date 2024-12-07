@@ -1,5 +1,8 @@
 ## Development
 ```bash
+npm install
+```
+```bash
 npm start
 ```
 Runs both the client-side and server-side of the application in development mode, enabling live updates during development. Here's a breakdown:
@@ -15,6 +18,8 @@ Runs both the client-side and server-side of the application in development mode
 - **Database**: SQLite (a lightweight, file-based database)  
 
 This setup provides an integrated environment for seamless frontend and backend development.
+
+## Docker  
 
 | Command                          | Description                                                     | Example                                                                  |
 |----------------------------------|-----------------------------------------------------------------|--------------------------------------------------------------------------|
