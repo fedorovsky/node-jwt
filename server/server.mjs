@@ -160,11 +160,9 @@ const authenticateToken = async (req, res, next) => {
   }
 };
 
-
-
 app.get('/', async (req, res) => {
   const db = await dbPromise;
-  const users = await db.all('SELECT email FROM users');
+  const users = await db.all('SELECT id, email FROM users');
 
   res.json(users);
 });
@@ -178,7 +176,7 @@ app.listen(3000, () => {
  */
 app.get('/protected', authenticateToken, async (req, res) => {
   const db = await dbPromise;
-  const users = await db.all('SELECT email FROM users');
+  const users = await db.all('SELECT id, email FROM users');
 
   res.json({
     message: 'This is a protected route',
@@ -194,10 +192,13 @@ app.delete('/auth/delete-all-users', async (req, res) => {
 
   try {
     await db.run('DELETE FROM users');
-    res.status(200).json({ message: 'All users have been deleted successfully.' });
+    res
+      .status(200)
+      .json({ message: 'All users have been deleted successfully.' });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'An error occurred while deleting users.' });
+    res
+      .status(500)
+      .json({ message: 'An error occurred while deleting users.' });
   }
 });
-
