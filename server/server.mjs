@@ -164,7 +164,7 @@ const authenticateToken = async (req, res, next) => {
 
 app.get('/', async (req, res) => {
   const db = await dbPromise;
-  const users = await db.all('SELECT email FROM users');
+  const users = await db.all('SELECT id, email FROM users');
 
   res.json(users);
 });
@@ -178,7 +178,7 @@ app.listen(3000, () => {
  */
 app.get('/protected', authenticateToken, async (req, res) => {
   const db = await dbPromise;
-  const users = await db.all('SELECT email FROM users');
+  const users = await db.all('SELECT id, email FROM users');
 
   res.json({
     message: 'This is a protected route',
