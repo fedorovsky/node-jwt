@@ -20,3 +20,15 @@ services:
       - PORT=3000
     volumes:
       - ./database.db:/usr/app/database.db:delegated
+
+  sqlite-viewer:
+    image: coleifer/sqlite-web
+    container_name: sqlite-viewer
+    environment:
+      - SQLITE_DATABASE=/data/database.db
+    volumes:
+      - ./database.db:/data/database.db:ro
+    ports:
+      - "8081:8080"
+    depends_on:
+      - server
