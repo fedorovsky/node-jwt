@@ -37,3 +37,4 @@ Before building and running the Docker container, you need to manually create a 
 
 - The client will be available at [http://localhost:7373](http://localhost:7373)  
 - The server will be available at [http://localhost:3000](http://localhost:3000)
+- The SQLite Viewer will be available at [http://localhost:8081](http://localhost:8081)
