@@ -9,6 +9,7 @@ import {
   CardFooter
 } from '@/shared/components/ui/card.tsx';
 import { Button } from '@/shared/components/ui/button.tsx';
+import { Link } from 'react-router-dom';
 
 // Интерфейс для данных формы
 interface FormValues {
@@ -78,9 +79,9 @@ export const AuthLoginPage = () => {
         <CardFooter>
           <p>
             Don't have an account?{' '}
-            <a href='#' className='text-blue-500 hover:underline'>
+            <Link to='/auth/register' className='text-blue-500 hover:underline'>
               Register
-            </a>
+            </Link>
           </p>
         </CardFooter>
       </Card>
