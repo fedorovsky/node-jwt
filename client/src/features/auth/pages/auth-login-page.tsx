@@ -11,7 +11,6 @@ import {
 import { Button } from '@/shared/components/ui/button.tsx';
 import { Link } from 'react-router-dom';
 
-// Интерфейс для данных формы
 interface FormValues {
   email: string;
   password: string;
@@ -24,7 +23,6 @@ export const AuthLoginPage = () => {
     formState: { errors }
   } = useForm<FormValues>();
 
-  // Обработчик отправки данных
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     console.log('Form Data:', data);
   };

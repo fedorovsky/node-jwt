@@ -11,14 +11,12 @@ import { Input } from '@/shared/components/ui/input.tsx';
 import { Button } from '@/shared/components/ui/button.tsx';
 import { Link } from 'react-router-dom';
 
-// Интерфейс для данных формы
 interface FormValues {
   email: string;
   password: string;
   confirmPassword: string;
 }
 
-// Компонент с типизацией
 export const AuthRegisterPage = () => {
   const {
     register,
@@ -27,7 +25,6 @@ export const AuthRegisterPage = () => {
     watch
   } = useForm<FormValues>();
 
-  // Обработчик отправки данных
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     console.log('Form Data:', data);
   };
@@ -96,7 +93,7 @@ export const AuthRegisterPage = () => {
         </CardContent>
         <CardFooter>
           <p>
-            Don't have an account?{' '}
+            Have an account?{' '}
             <Link to='/auth/login' className='text-blue-500 hover:underline'>
               Login
             </Link>
