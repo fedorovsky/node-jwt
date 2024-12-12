@@ -117,6 +117,35 @@ app.post('/auth/login', async (req, res) => {
 });
 
 /**
+ * Check if email exists
+ */
+app.post('/auth/check-email', async (req, res) => {
+  const { email } = req.body;
+
+  // Validate email
+  if (!email || !/\S+@\S+\.\S+/.test(email)) {
+    return res.status(400).json({ message: 'Valid email is required' });
+  }
+
+  const db = await dbPromise;
+
+  try {
+    // Check if email exists in the database
+    const existingUser = await db.get('SELECT * FROM users WHERE email = ?', [email]);
+
+    if (existingUser) {
+      return res.status(200).json({ exists: true, message: 'Email is already registered' });
+    } else {
+      return res.status(200).json({ exists: false, message: 'Email is available' });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred while checking the email' });
+  }
+});
+
+
+/**
  * Middleware for token verification
  */
 const authenticateToken = async (req, res, next) => {
