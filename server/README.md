@@ -29,17 +29,15 @@
 - **URL**: `/auth/check-email`
 - **Method**: `POST`
 - **Description**: Checks if an email is already registered in the system.
-
-#### Request Body
-- `email` (string, required) - The email to check for availability.
-
-#### Response
-- **If the email is already registered:**
-  ```json
-  {
-    "exists": true,
-    "message": "Email is already registered"
-  }
+- **Request Body**:
+    - `email` (string, required) - The email to check for availability.
+- **Response**:
+  - **If the email is already registered:**
+    ```json
+    {
+      "exists": true,
+      "message": "Email is already registered"
+    }
 
 ### Protected Routes
 
