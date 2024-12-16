@@ -10,7 +10,9 @@ export const HomePage = () => {
 
   return (
     <div>
-      <h1 className='text-4xl font-bold text-gray-800 tracking-tight leading-tight mb-4'>Home</h1>
+      <h1 className="mb-4 text-4xl font-bold leading-tight tracking-tight text-gray-800">
+        Home
+      </h1>
       <Button onClick={handleClick}>fetch</Button>
     </div>
   );
