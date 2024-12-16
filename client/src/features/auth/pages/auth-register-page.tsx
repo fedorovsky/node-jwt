@@ -4,7 +4,7 @@ import {
   CardContent,
   CardFooter,
   CardHeader,
-  CardTitle
+  CardTitle,
 } from '@/shared/components/ui/card.tsx';
 import { Label } from '@/shared/components/ui/label.tsx';
 import { Input } from '@/shared/components/ui/input.tsx';
@@ -22,71 +22,80 @@ export const AuthRegisterPage = () => {
     register,
     handleSubmit,
     formState: { errors },
-    watch
+    watch,
   } = useForm<FormValues>();
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
+  const onSubmit: SubmitHandler<FormValues> = data => {
     console.log('Form Data:', data);
   };
 
   return (
-    <div className='flex items-center justify-center'>
+    <div className="flex items-center justify-center">
       <Card>
         <CardHeader>
           <CardTitle>Register</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} noValidate>
-            <div className='mb-4'>
-              <Label htmlFor='email'>Email</Label>
+            <div className="mb-4">
+              <Label htmlFor="email">Email</Label>
               <Input
-                type='email'
-                id='email'
-                placeholder='Enter your email'
+                type="email"
+                id="email"
+                placeholder="Enter your email"
                 {...register('email', {
                   required: 'Email is required',
                   pattern: {
                     value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-                    message: 'Invalid email format'
-                  }
+                    message: 'Invalid email format',
+                  },
                 })}
               ></Input>
-              {errors.email && <p className='text-sm text-red-500 mt-1'>{errors.email.message}</p>}
+              {errors.email && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
-            <div className='mb-4'>
-              <Label htmlFor='password'>Password</Label>
+            <div className="mb-4">
+              <Label htmlFor="password">Password</Label>
               <Input
-                type='password'
-                id='password'
-                placeholder='Enter your password'
+                type="password"
+                id="password"
+                placeholder="Enter your password"
                 {...register('password', {
                   required: 'Password is required',
                   minLength: {
                     value: 6,
-                    message: 'Password must be at least 6 characters'
-                  }
+                    message: 'Password must be at least 6 characters',
+                  },
                 })}
               />
               {errors.password && (
-                <p className='text-sm text-red-500 mt-1'>{errors.password.message}</p>
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.password.message}
+                </p>
               )}
             </div>
-            <div className='mb-4'>
-              <Label htmlFor='password'>Password</Label>
+            <div className="mb-4">
+              <Label htmlFor="password">Password</Label>
               <Input
-                type='password'
-                id='confirm-password'
-                placeholder='Enter your password'
+                type="password"
+                id="confirm-password"
+                placeholder="Enter your password"
                 {...register('confirmPassword', {
                   required: 'Confirm Password is required',
-                  validate: (value) => value === watch('password') || 'Passwords do not match'
+                  validate: value =>
+                    value === watch('password') || 'Passwords do not match',
                 })}
               />
               {errors.confirmPassword && (
-                <p className='text-sm text-red-500 mt-1'>{errors.confirmPassword.message}</p>
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.confirmPassword.message}
+                </p>
               )}
             </div>
-            <Button type='submit' className='w-full'>
+            <Button type="submit" className="w-full">
               Register
             </Button>
           </form>
@@ -94,7 +103,7 @@ export const AuthRegisterPage = () => {
         <CardFooter>
           <p>
             Have an account?{' '}
-            <Link to='/auth/login' className='text-blue-500 hover:underline'>
+            <Link to="/auth/login" className="text-blue-500 hover:underline">
               Login
             </Link>
           </p>
