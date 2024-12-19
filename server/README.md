@@ -73,11 +73,11 @@ The file `tools/postman.json` contains a pre-configured Postman collection for t
 Build a Docker Image from the current directory with the name node-jwt-image
 
 ```bash
-docker build -t node-jwt-image .
+docker build -t node-jwt-server-image -f docker/Dockerfile .
 ```
 
 Run the container in detached mode, map port 3000 to 3000, and name it node-jwt-container
 
 ```bash
-docker run -d -p 3000:3000 --name node-jwt-container node-jwt-image
+docker run -d -p 3000:3000 --name node-jwt-server-container node-jwt-server-image
 ```

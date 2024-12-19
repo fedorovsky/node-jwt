@@ -3,7 +3,7 @@
 Build a Docker Image from the current directory with the name node-jwt-client
 
 ```bash
-docker build -t node-jwt-client .
+docker build -t node-jwt-client -f docker/Dockerfile .
 ```
 
 Run the container in detached mode, map port 3000 to 3000, and name it
