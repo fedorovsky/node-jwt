@@ -21,13 +21,13 @@ This setup provides an integrated environment for seamless frontend and backend 
 
 ## Docker  
 
-| Command                          | Description                                                     | Example                                                                  |
-|----------------------------------|-----------------------------------------------------------------|--------------------------------------------------------------------------|
-| Docker Build with `arg`          | Build Docker image with a specified build argument.             | `docker compose build --build-arg GIT_COMMIT_HASH="custom-git-commit"`   |
-| Docker Build                     | Build Docker image using the configuration in the Compose file. | `docker compose build`                                                   |
-| Docker Run                       | Start and run the services defined in the Compose file.         | `docker compose up`                                                      |
-| Docker Build and Run             | Build the Docker image and run the services.                    | `docker compose up --build`                                              |
-| Docker Stop                      | Stop the services without removing containers.                  | `docker compose stop`                                                    |
+| Command                          | Description                                                     | Example                                                                                             |
+|----------------------------------|-----------------------------------------------------------------|-----------------------------------------------------------------------------------------------------|
+| Docker Build with `arg`          | Build Docker image with a specified build argument.             | `docker compose -f docker/docker-compose.yml build --build-arg GIT_COMMIT_HASH="custom-git-commit"` |
+| Docker Build                     | Build Docker image using the configuration in the Compose file. | `docker compose -f docker/docker-compose.yml build`                                                 |
+| Docker Run                       | Start and run the services defined in the Compose file.         | `docker compose -f docker/docker-compose.yml up`                                                    |
+| Docker Build and Run             | Build the Docker image and run the services.                    | `docker compose -f docker/docker-compose.yml up --build`                                            |
+| Docker Stop                      | Stop the services without removing containers.                  | `docker compose -f docker/docker-compose.yml stop`                                                  |
 
 
 Before building and running the Docker container, you need to manually create a `database.db` file. This step ensures that the Docker volume correctly maps to the file system and the application can access the database.
