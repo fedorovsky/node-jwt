@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {
-        DOCKER_COMPOSE_FILE = "docker-compose.yml"
+        DOCKER_COMPOSE_FILE = "./docker/docker-compose.yml"
         GIT_COMMIT_HASH = "${env.GIT_COMMIT}"
         GITHUB_TOKEN = credentials('github-token')
         GITHUB_REPO = 'fedorovsky/node-jwt'
