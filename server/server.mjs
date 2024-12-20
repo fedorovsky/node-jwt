@@ -5,6 +5,7 @@ import cors from 'cors';
 import morgan from 'morgan';
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
+import {faker} from '@faker-js/faker';
 
 const app = express();
 app.use(express.json());
@@ -23,14 +24,27 @@ const dbPromise = open({
 const initializeDatabase = async () => {
   const db = await dbPromise;
 
-  // Create the users table if it doesn't exist
+  // Создаём таблицу, если она не существует
   await db.exec(`
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       email TEXT UNIQUE NOT NULL,
-      password TEXT NOT NULL
+      password TEXT NOT NULL,
+      username TEXT NOT NULL
     );
   `);
+
+  // Проверяем существование колонки username
+  const columns = await db.all(`PRAGMA table_info(users);`);
+
+  const usernameExists = columns.some((column) => column.name === 'username');
+
+  // Если колонки нет, добавляем её
+  if (!usernameExists) {
+    await db.exec(`
+      ALTER TABLE users ADD COLUMN username TEXT NOT NULL DEFAULT '';
+    `);
+  }
 };
 
 // Function to generate a JWT
@@ -69,11 +83,13 @@ app.post('/auth/register', async (req, res) => {
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    const username = faker.internet.username();
+
     // Save the user
-    await db.run('INSERT INTO users (email, password) VALUES (?, ?)', [
-      email,
-      hashedPassword,
-    ]);
+    await db.run(
+      'INSERT INTO users (email, password, username) VALUES (?, ?, ?)',
+      [email, hashedPassword, username],
+    );
 
     // Generate JWT
     const token = await generateToken({ email });
@@ -117,6 +133,25 @@ app.post('/auth/login', async (req, res) => {
 });
 
 /**
+ * Delete all users
+ */
+app.delete('/auth/delete-all-users', async (req, res) => {
+  const db = await dbPromise;
+
+  try {
+    await db.run('DELETE FROM users');
+    res
+      .status(200)
+      .json({ message: 'All users have been deleted successfully.' });
+  } catch (err) {
+    console.error(err);
+    res
+      .status(500)
+      .json({ message: 'An error occurred while deleting users.' });
+  }
+});
+
+/**
  * Check if email exists
  */
 app.post('/auth/check-email', async (req, res) => {
@@ -131,19 +166,26 @@ app.post('/auth/check-email', async (req, res) => {
 
   try {
     // Check if email exists in the database
-    const existingUser = await db.get('SELECT * FROM users WHERE email = ?', [email]);
+    const existingUser = await db.get('SELECT * FROM users WHERE email = ?', [
+      email,
+    ]);
 
     if (existingUser) {
-      return res.status(200).json({ exists: true, message: 'Email is already registered' });
+      return res
+        .status(200)
+        .json({ exists: true, message: 'Email is already registered' });
     } else {
-      return res.status(200).json({ exists: false, message: 'Email is available' });
+      return res
+        .status(200)
+        .json({ exists: false, message: 'Email is available' });
     }
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'An error occurred while checking the email' });
+    res
+      .status(500)
+      .json({ message: 'An error occurred while checking the email' });
   }
 });
-
 
 /**
  * Middleware for token verification
@@ -205,29 +247,10 @@ app.listen(3000, () => {
  */
 app.get('/protected', authenticateToken, async (req, res) => {
   const db = await dbPromise;
-  const users = await db.all('SELECT id, email FROM users');
+  const users = await db.all('SELECT id, email, username FROM users');
 
   res.json({
     message: 'This is a protected route',
     users,
   });
-});
-
-/**
- * Delete all users
- */
-app.delete('/auth/delete-all-users', async (req, res) => {
-  const db = await dbPromise;
-
-  try {
-    await db.run('DELETE FROM users');
-    res
-      .status(200)
-      .json({ message: 'All users have been deleted successfully.' });
-  } catch (err) {
-    console.error(err);
-    res
-      .status(500)
-      .json({ message: 'An error occurred while deleting users.' });
-  }
 });
