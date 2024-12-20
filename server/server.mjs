@@ -233,7 +233,7 @@ const authenticateToken = async (req, res, next) => {
 
 app.get('/', async (req, res) => {
   const db = await dbPromise;
-  const users = await db.all('SELECT id, email FROM users');
+  const users = await db.all('SELECT id, email, username FROM users');
 
   res.json(users);
 });
