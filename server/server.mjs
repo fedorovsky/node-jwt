@@ -59,6 +59,50 @@ const generateToken = async (payload) => {
 initializeDatabase();
 
 /**
+ * Middleware for token verification
+ */
+const authenticateToken = async (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({
+      error: 'Unauthorized',
+      message: 'Authentication token is missing or invalid.',
+    });
+  }
+
+  try {
+    const { payload } = await jwtVerify(token, SECRET_KEY);
+    const db = await dbPromise;
+    const user = await db.get('SELECT * FROM users WHERE email = ?', [
+      payload.email,
+    ]);
+
+    if (!user) {
+      return res.status(401).json({
+        error: 'Unauthorized',
+        message: 'Authentication failed.',
+      });
+    }
+
+    req.user = user;
+    next();
+  } catch (err) {
+    if (err instanceof errors.JWTExpired) {
+      return res.status(401).json({
+        error: 'Token Expired',
+        message: 'The authentication token has expired. Please log in again.',
+      });
+    }
+    return res.status(403).json({
+      error: 'Unauthorized',
+      message: 'Authentication token is invalid.',
+    });
+  }
+};
+
+/**
  * Registration
  */
 app.post('/auth/register', async (req, res) => {
@@ -100,7 +144,6 @@ app.post('/auth/register', async (req, res) => {
     res.status(500).json({ message: 'An error occurred during registration' });
   }
 });
-
 /**
  * Login
  */
@@ -188,59 +231,21 @@ app.post('/auth/check-email', async (req, res) => {
 });
 
 /**
- * Middleware for token verification
+ * Get all users
  */
-const authenticateToken = async (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-
-  if (!token) {
-    return res.status(401).json({
-      error: 'Unauthorized',
-      message: 'Authentication token is missing or invalid.',
-    });
-  }
+app.get('/users', async (req, res) => {
+  const db = await dbPromise;
 
   try {
-    const { payload } = await jwtVerify(token, SECRET_KEY);
-    const db = await dbPromise;
-    const user = await db.get('SELECT * FROM users WHERE email = ?', [
-      payload.email,
-    ]);
-
-    if (!user) {
-      return res.status(401).json({
-        error: 'Unauthorized',
-        message: 'Authentication failed.',
-      });
-    }
-
-    req.user = user;
-    next();
+    const users = await db.all('SELECT id, email, username FROM users');
+    res.status(200).json(users);
   } catch (err) {
-    if (err instanceof errors.JWTExpired) {
-      return res.status(401).json({
-        error: 'Token Expired',
-        message: 'The authentication token has expired. Please log in again.',
-      });
-    }
-    return res.status(403).json({
-      error: 'Unauthorized',
-      message: 'Authentication token is invalid.',
-    });
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred while retrieving users' });
   }
-};
-
-app.get('/', async (req, res) => {
-  const db = await dbPromise;
-  const users = await db.all('SELECT id, email, username FROM users');
-
-  res.json(users);
 });
 
-app.listen(3000, () => {
-  console.log('Server running on http://localhost:3000');
-});
+
 
 /**
  * Protected route
@@ -253,4 +258,8 @@ app.get('/protected', authenticateToken, async (req, res) => {
     message: 'This is a protected route',
     users,
   });
+});
+
+app.listen(3000, () => {
+  console.log('Server running on http://localhost:3000');
 });
