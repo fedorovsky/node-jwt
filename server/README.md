@@ -39,9 +39,9 @@
       "message": "Email is already registered"
     }
 
-### Protected Routes
+## Protected Routes
 
-#### Protected Data Access
+### Protected Data Access
 
 - **URL**: `/protected`
 - **Method**: `GET`
@@ -50,14 +50,17 @@
   - `Authorization` (string, required) - Bearer token obtained from login.
 - **Response**: Returns a message and a list of registered users (excluding passwords).
 
-### Public Routes
+## Users
 
-#### Get All Users (Public)
-
-- **URL**: `/`
+### Get All Users
+- **URL**: `/users`
 - **Method**: `GET`
-- **Description**: Fetches a list of all registered users, showing only safe data (e.g., emails).
-- **Response**: Returns a list of users (without passwords).
+- **Description**: Retrieves a list of all registered users.
+
+### Remove All Users
+- **URL**: `/users/remove-all`
+- **Method**: `DELETE`
+- **Description**: Deletes all registered users from the system.
 
 ## Postman
 
