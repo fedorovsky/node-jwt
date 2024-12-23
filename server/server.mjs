@@ -176,25 +176,6 @@ app.post('/auth/login', async (req, res) => {
 });
 
 /**
- * Delete all users
- */
-app.delete('/auth/delete-all-users', async (req, res) => {
-  const db = await dbPromise;
-
-  try {
-    await db.run('DELETE FROM users');
-    res
-      .status(200)
-      .json({ message: 'All users have been deleted successfully.' });
-  } catch (err) {
-    console.error(err);
-    res
-      .status(500)
-      .json({ message: 'An error occurred while deleting users.' });
-  }
-});
-
-/**
  * Check if email exists
  */
 app.post('/auth/check-email', async (req, res) => {
@@ -244,7 +225,24 @@ app.get('/users', async (req, res) => {
     res.status(500).json({ message: 'An error occurred while retrieving users' });
   }
 });
+/**
+ * Remove all users
+ */
+app.delete('/users/remove-all', async (req, res) => {
+  const db = await dbPromise;
 
+  try {
+    await db.run('DELETE FROM users');
+    res
+      .status(200)
+      .json({ message: 'All users have been deleted successfully.' });
+  } catch (err) {
+    console.error(err);
+    res
+      .status(500)
+      .json({ message: 'An error occurred while deleting users.' });
+  }
+});
 
 
 /**
