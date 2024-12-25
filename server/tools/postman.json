@@ -7,7 +7,7 @@
 	},
 	"item": [
 		{
-			"name": "register",
+			"name": "Auth - Register",
 			"event": [
 				{
 					"listen": "prerequest",
@@ -49,7 +49,7 @@
 			"response": []
 		},
 		{
-			"name": "login",
+			"name": "Auth - Login",
 			"event": [
 				{
 					"listen": "test",
@@ -103,43 +103,7 @@
 			"response": []
 		},
 		{
-			"name": "protected",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{token}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [
-					{
-						"key": "",
-						"value": "",
-						"type": "text",
-						"disabled": true
-					}
-				],
-				"url": {
-					"raw": "http://localhost:3000/protected",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"protected"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "check-email",
+			"name": "Auth - Check Email",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -174,6 +138,22 @@
 			"response": []
 		},
 		{
+			"name": "Users - Me",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Users - Get All",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
 			"name": "Users - Remove all",
 			"request": {
 				"method": "DELETE",
@@ -194,10 +174,38 @@
 			"response": []
 		},
 		{
-			"name": "Users - Get All",
+			"name": "Protected",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
-				"header": []
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/protected",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"protected"
+					]
+				}
 			},
 			"response": []
 		}
