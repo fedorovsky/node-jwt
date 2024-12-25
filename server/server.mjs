@@ -212,7 +212,7 @@ app.post('/auth/check-email', async (req, res) => {
 });
 
 /**
- * Get all users
+ * Users - get all
  */
 app.get('/users', async (req, res) => {
   const db = await dbPromise;
@@ -226,7 +226,7 @@ app.get('/users', async (req, res) => {
   }
 });
 /**
- * Remove all users
+ * Users - remove all
  */
 app.delete('/users/remove-all', async (req, res) => {
   const db = await dbPromise;
@@ -243,6 +243,26 @@ app.delete('/users/remove-all', async (req, res) => {
       .json({ message: 'An error occurred while deleting users.' });
   }
 });
+/**
+ * Users - me
+ */
+app.get('/users/me', authenticateToken, async (req, res) => {
+  try {
+    // Extract user data from the middleware
+    const { id, email, username } = req.user;
+
+    // Respond with the user's details
+    res.status(200).json({
+      id,
+      email,
+      username,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred while retrieving user details.' });
+  }
+});
+
 
 
 /**

@@ -30,24 +30,26 @@ export const HomePage = () => {
         Home
       </h1>
       <Button onClick={handleClick}>/api/users</Button>
-      <Table className="mt-2">
-        <TableHeader>
-          <TableRow>
-            <TableHead>id</TableHead>
-            <TableHead>email</TableHead>
-            <TableHead>username</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {users.map(user => (
-            <TableRow key={user.id}>
-              <TableCell>{user.id}</TableCell>
-              <TableCell>{user.email}</TableCell>
-              <TableCell>{user.username}</TableCell>
+      {users.length !== 0 && (
+        <Table className="mt-2">
+          <TableHeader>
+            <TableRow>
+              <TableHead>id</TableHead>
+              <TableHead>email</TableHead>
+              <TableHead>username</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {users.map(user => (
+              <TableRow key={user.id}>
+                <TableCell>{user.id}</TableCell>
+                <TableCell>{user.email}</TableCell>
+                <TableCell>{user.username}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
     </div>
   );
 };

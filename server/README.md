@@ -1,5 +1,3 @@
-# node-jwt
-
 ## API Endpoints
 
 ### Authentication Routes
