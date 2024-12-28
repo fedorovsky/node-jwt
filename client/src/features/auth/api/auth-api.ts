@@ -1,4 +1,5 @@
 import { rootApi, ApiTags } from '@/app/root-api';
+import * as authModule from '../redux';
 
 export interface RegisterRequest {
   email: string;
@@ -46,11 +47,12 @@ export const authApi = rootApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      async onQueryStarted(_, { queryFulfilled }) {
+      async onQueryStarted(_, { queryFulfilled, dispatch }) {
         try {
           const { data } = await queryFulfilled;
           if (data.token) {
             localStorage.setItem('token', data.token);
+            dispatch(authModule.actions.login());
           }
         } catch (error) {
           console.error('Error:', error);
@@ -58,8 +60,9 @@ export const authApi = rootApi.injectEndpoints({
       },
     }),
     logout: builder.mutation<void, void>({
-      queryFn: async () => {
-        localStorage.removeItem('token'); // Удаляем токен из localStorage
+      queryFn: async (_arg, api) => {
+        localStorage.removeItem('token');
+        api.dispatch(authModule.actions.logout());
         return { data: undefined }; // Успешное завершение запроса
       },
     }),
