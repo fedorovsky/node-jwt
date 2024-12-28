@@ -1,5 +1,5 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Input } from '@/shared/components/ui/input.tsx';
 import { Label } from '@/shared/components/ui/label.tsx';
 import {
@@ -20,6 +20,7 @@ interface FormValues {
 export const AuthLoginPage = () => {
   const [loginUser, { isLoading, isError, error }] = useLoginMutation();
   const [logoutUser] = useLogoutMutation();
+  const navigate = useNavigate();
 
   console.log('=======');
   console.log('isError', isError);
@@ -32,9 +33,10 @@ export const AuthLoginPage = () => {
     formState: { errors },
   } = useForm<FormValues>();
 
-  const onSubmit: SubmitHandler<FormValues> = data => {
+  const onSubmit: SubmitHandler<FormValues> = async data => {
     console.log('Form Data:', data);
-    loginUser({ email: data.email, password: data.password });
+    await loginUser({ email: data.email, password: data.password });
+    navigate('/');
   };
 
   const handleLogout = () => {
