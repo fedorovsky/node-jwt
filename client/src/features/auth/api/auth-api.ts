@@ -28,10 +28,11 @@ export const authApi = rootApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      async onQueryStarted(_, { queryFulfilled }) {
+      async onQueryStarted(_, { queryFulfilled, dispatch }) {
         try {
           const { data } = await queryFulfilled;
           if (data.token) {
+            dispatch(rootApi.util.invalidateTags(['Users']));
             localStorage.setItem('token', data.token);
           }
         } catch (error) {
