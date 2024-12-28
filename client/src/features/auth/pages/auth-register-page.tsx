@@ -1,5 +1,5 @@
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Card,
   CardContent,
@@ -20,6 +20,7 @@ interface FormValues {
 
 export const AuthRegisterPage = () => {
   const [registerUser, { isLoading, isError, error }] = useRegisterMutation();
+  const navigate = useNavigate();
 
   console.log('=======');
   console.log('isError', isError);
@@ -33,9 +34,10 @@ export const AuthRegisterPage = () => {
     watch,
   } = useForm<FormValues>();
 
-  const onSubmit: SubmitHandler<FormValues> = data => {
+  const onSubmit: SubmitHandler<FormValues> = async data => {
     console.log('Form Data:', data);
-    registerUser({ email: data.email, password: data.password });
+    await registerUser({ email: data.email, password: data.password });
+    navigate('/');
   };
 
   return (
