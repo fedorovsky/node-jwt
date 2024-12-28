@@ -56,8 +56,15 @@ export const authApi = rootApi.injectEndpoints({
         }
       },
     }),
+    logout: builder.mutation<void, void>({
+      queryFn: async () => {
+        localStorage.removeItem('token'); // Удаляем токен из localStorage
+        return { data: undefined }; // Успешное завершение запроса
+      },
+    }),
   }),
   overrideExisting: false, // Позволяет избежать замены существующих эндпоинтов
 });
 
-export const { useRegisterMutation, useLoginMutation } = authApi;
+export const { useRegisterMutation, useLoginMutation, useLogoutMutation } =
+  authApi;

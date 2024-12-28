@@ -10,7 +10,7 @@ import {
   CardFooter,
 } from '@/shared/components/ui/card.tsx';
 import { Button } from '@/shared/components/ui/button.tsx';
-import { useLoginMutation } from '../api/auth-api.ts';
+import { useLoginMutation, useLogoutMutation } from '../api/auth-api.ts';
 
 interface FormValues {
   email: string;
@@ -19,6 +19,7 @@ interface FormValues {
 
 export const AuthLoginPage = () => {
   const [loginUser, { isLoading, isError, error }] = useLoginMutation();
+  const [logoutUser] = useLogoutMutation();
 
   console.log('=======');
   console.log('isError', isError);
@@ -34,6 +35,10 @@ export const AuthLoginPage = () => {
   const onSubmit: SubmitHandler<FormValues> = data => {
     console.log('Form Data:', data);
     loginUser({ email: data.email, password: data.password });
+  };
+
+  const handleLogout = () => {
+    logoutUser();
   };
 
   return (
@@ -86,6 +91,13 @@ export const AuthLoginPage = () => {
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
               Login
+            </Button>
+            <Button
+              type="button"
+              className="mt-2 w-full"
+              onClick={handleLogout}
+            >
+              Logout
             </Button>
           </form>
         </CardContent>
