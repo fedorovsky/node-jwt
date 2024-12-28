@@ -5,6 +5,6 @@ export const rootApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: '/api', // Укажите базовый URL для вашего API
   }),
-  tagTypes: ['User'], // Определите теги для обновления данных
+  tagTypes: ['Users'], // Определите теги для обновления данных
   endpoints: () => ({}), // Здесь будет расширение эндпоинтов
 });

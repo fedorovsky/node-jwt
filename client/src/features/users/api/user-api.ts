@@ -10,7 +10,7 @@ export const userApi = rootApi.injectEndpoints({
   endpoints: builder => ({
     fetchUsers: builder.query<User[], void>({
       query: () => '/users',
-      providesTags: ['User'],
+      providesTags: ['Users'],
     }),
     addUser: builder.mutation({
       query: newUser => ({
@@ -18,7 +18,7 @@ export const userApi = rootApi.injectEndpoints({
         method: 'POST',
         body: newUser,
       }),
-      invalidatesTags: ['User'],
+      invalidatesTags: ['Users'],
     }),
   }),
 });

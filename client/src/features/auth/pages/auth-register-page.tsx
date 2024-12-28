@@ -37,7 +37,7 @@ export const AuthRegisterPage = () => {
   const onSubmit: SubmitHandler<FormValues> = async data => {
     console.log('Form Data:', data);
     await registerUser({ email: data.email, password: data.password });
-    navigate('/');
+    navigate('/users');
   };
 
   return (
