@@ -1,4 +1,5 @@
 import { useForm, SubmitHandler } from 'react-hook-form';
+import { Link } from 'react-router-dom';
 import {
   Card,
   CardContent,
@@ -9,7 +10,7 @@ import {
 import { Label } from '@/shared/components/ui/label.tsx';
 import { Input } from '@/shared/components/ui/input.tsx';
 import { Button } from '@/shared/components/ui/button.tsx';
-import { Link } from 'react-router-dom';
+import { useRegisterMutation } from '../api/auth-api';
 
 interface FormValues {
   email: string;
@@ -18,6 +19,13 @@ interface FormValues {
 }
 
 export const AuthRegisterPage = () => {
+  const [registerUser, { isLoading, isError, error }] = useRegisterMutation();
+
+  console.log('=======');
+  console.log('isError', isError);
+  console.log('ErrorFromServer', error);
+  console.log('=======');
+
   const {
     register,
     handleSubmit,
@@ -27,6 +35,7 @@ export const AuthRegisterPage = () => {
 
   const onSubmit: SubmitHandler<FormValues> = data => {
     console.log('Form Data:', data);
+    registerUser({ email: data.email, password: data.password });
   };
 
   return (
@@ -95,7 +104,7 @@ export const AuthRegisterPage = () => {
                 </p>
               )}
             </div>
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full" disabled={isLoading}>
               Register
             </Button>
           </form>

@@ -1,4 +1,5 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { Link } from 'react-router-dom';
 import { Input } from '@/shared/components/ui/input.tsx';
 import { Label } from '@/shared/components/ui/label.tsx';
 import {
@@ -9,7 +10,7 @@ import {
   CardFooter,
 } from '@/shared/components/ui/card.tsx';
 import { Button } from '@/shared/components/ui/button.tsx';
-import { Link } from 'react-router-dom';
+import { useLoginMutation } from '../api/auth-api.ts';
 
 interface FormValues {
   email: string;
@@ -17,6 +18,13 @@ interface FormValues {
 }
 
 export const AuthLoginPage = () => {
+  const [loginUser, { isLoading, isError, error }] = useLoginMutation();
+
+  console.log('=======');
+  console.log('isError', isError);
+  console.log('ErrorFromServer', error);
+  console.log('=======');
+
   const {
     register,
     handleSubmit,
@@ -25,6 +33,7 @@ export const AuthLoginPage = () => {
 
   const onSubmit: SubmitHandler<FormValues> = data => {
     console.log('Form Data:', data);
+    loginUser({ email: data.email, password: data.password });
   };
 
   return (
@@ -75,7 +84,7 @@ export const AuthLoginPage = () => {
                 </p>
               )}
             </div>
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full" disabled={isLoading}>
               Login
             </Button>
           </form>
