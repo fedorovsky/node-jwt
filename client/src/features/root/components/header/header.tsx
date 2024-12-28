@@ -1,6 +1,9 @@
 import { Link } from 'react-router-dom';
+import { useAuth } from '@/features/auth';
 
 export const Header = () => {
+  const { isAuthenticated } = useAuth();
+
   return (
     <nav className="container mx-auto p-4">
       <ul className="flex space-x-4">
@@ -9,11 +12,13 @@ export const Header = () => {
             Home
           </Link>
         </li>
-        <li>
-          <Link to="/profile" className="text-white hover:text-gray-400">
-            Profile
-          </Link>
-        </li>
+        {isAuthenticated && (
+          <li>
+            <Link to="/profile" className="text-white hover:text-gray-400">
+              Profile
+            </Link>
+          </li>
+        )}
         <li>
           <Link to="/users" className="text-white hover:text-gray-400">
             Users
