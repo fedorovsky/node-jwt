@@ -1,4 +1,4 @@
-import { rootApi } from '@/app/root-api.ts';
+import { rootApi, ApiTags } from '@/app/root-api.ts';
 
 type User = {
   id: number;
@@ -10,7 +10,7 @@ export const userApi = rootApi.injectEndpoints({
   endpoints: builder => ({
     fetchUsers: builder.query<User[], void>({
       query: () => '/users',
-      providesTags: ['Users'],
+      providesTags: [ApiTags.Users],
     }),
     addUser: builder.mutation({
       query: newUser => ({
@@ -18,7 +18,7 @@ export const userApi = rootApi.injectEndpoints({
         method: 'POST',
         body: newUser,
       }),
-      invalidatesTags: ['Users'],
+      invalidatesTags: [ApiTags.Users],
     }),
   }),
 });

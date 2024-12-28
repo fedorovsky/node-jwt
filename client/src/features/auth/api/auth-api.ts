@@ -1,4 +1,4 @@
-import { rootApi } from '@/app/root-api';
+import { rootApi, ApiTags } from '@/app/root-api';
 
 export interface RegisterRequest {
   email: string;
@@ -32,7 +32,7 @@ export const authApi = rootApi.injectEndpoints({
         try {
           const { data } = await queryFulfilled;
           if (data.token) {
-            dispatch(rootApi.util.invalidateTags(['Users']));
+            dispatch(rootApi.util.invalidateTags([ApiTags.Users]));
             localStorage.setItem('token', data.token);
           }
         } catch (error) {
