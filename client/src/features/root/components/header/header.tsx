@@ -15,6 +15,11 @@ export const Header = () => {
           </Link>
         </li>
         <li>
+          <Link to="/users" className="text-white hover:text-gray-400">
+            Users
+          </Link>
+        </li>
+        <li>
           <Link to="/auth" className="text-white hover:text-gray-400">
             Auth
           </Link>
