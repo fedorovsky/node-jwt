@@ -10,7 +10,8 @@ import {
 import { Label } from '@/shared/components/ui/label.tsx';
 import { Input } from '@/shared/components/ui/input.tsx';
 import { Button } from '@/shared/components/ui/button.tsx';
-import { useRegisterMutation } from '../api/auth-api';
+import { useAppDispatch } from '@/shared/hooks/useAppDispatch.ts';
+import { thunks } from '../redux';
 
 interface FormValues {
   email: string;
@@ -19,13 +20,8 @@ interface FormValues {
 }
 
 export const AuthRegisterPage = () => {
-  const [registerUser, { isLoading, isError, error }] = useRegisterMutation();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
-
-  console.log('=======');
-  console.log('isError', isError);
-  console.log('ErrorFromServer', error);
-  console.log('=======');
 
   const {
     register,
@@ -36,8 +32,19 @@ export const AuthRegisterPage = () => {
 
   const onSubmit: SubmitHandler<FormValues> = async data => {
     console.log('Form Data:', data);
-    await registerUser({ email: data.email, password: data.password });
-    navigate('/users');
+
+    const resultAction = await dispatch(
+      thunks.register({ email: data.email, password: data.password }),
+    );
+
+    if (thunks.register.fulfilled.match(resultAction)) {
+      navigate('/users');
+    } else {
+      console.error(
+        'Register failed:',
+        resultAction.payload || resultAction.error,
+      );
+    }
   };
 
   return (
@@ -106,7 +113,7 @@ export const AuthRegisterPage = () => {
                 </p>
               )}
             </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full" disabled={false}>
               Register
             </Button>
           </form>
