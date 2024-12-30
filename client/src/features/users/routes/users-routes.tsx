@@ -1,11 +1,12 @@
 import { Routes, Route } from 'react-router-dom';
-import { UsersPage } from '../pages/users-page.tsx';
+import { UsersMain } from '../pages/users-main.tsx';
+import { UsersList } from '../pages/users-list.tsx';
 
 export const UsersRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<UsersPage />}>
-        {/*<Route path="first" element={<First />} />*/}
+      <Route path="/" element={<UsersMain />}>
+        <Route path="list" element={<UsersList />} />
         {/*<Route path="second" element={<Second />} />*/}
       </Route>
     </Routes>
