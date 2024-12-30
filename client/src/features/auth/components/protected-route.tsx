@@ -13,6 +13,10 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 }) => {
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
 
+  console.log('======');
+  console.log('1', 'isAuthenticated', isAuthenticated);
+  console.log('======');
+
   if (!isAuthenticated) {
     return <Navigate to={redirectTo} />;
   }

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { register, login, logout } from './thunks';
+import { register, login, logout, validateToken } from './thunks';
 
 interface AuthState {
   isAuthenticated: boolean;
@@ -67,6 +67,25 @@ const authSlice = createSlice({
     });
     builder.addCase(logout.rejected, (state, action) => {
       state.loading = false;
+      state.error = action.payload as string;
+    });
+    // Validate Token
+    builder.addCase(validateToken.pending, state => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(
+      validateToken.fulfilled,
+      (state, action: PayloadAction<{ token: string }>) => {
+        state.loading = false;
+        state.isAuthenticated = true;
+        state.token = action.payload.token;
+      },
+    );
+    builder.addCase(validateToken.rejected, (state, action) => {
+      state.loading = false;
+      state.isAuthenticated = false;
+      state.token = null;
       state.error = action.payload as string;
     });
   },

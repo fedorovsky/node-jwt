@@ -49,3 +49,29 @@ export const logout = createAsyncThunk(
     }
   },
 );
+
+export const validateToken = createAsyncThunk(
+  'auth/validateToken',
+  async (_, { rejectWithValue }) => {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      return rejectWithValue('No token found.');
+    }
+
+    try {
+      await axios.get('/api/users/me', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      return { token: token };
+    } catch (error: any) {
+      localStorage.removeItem('token'); // Удаляем недействительный токен
+      return rejectWithValue(
+        error.response?.data?.message || 'Token validation failed.',
+      );
+    }
+  },
+);
