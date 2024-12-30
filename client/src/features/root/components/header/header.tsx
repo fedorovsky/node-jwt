@@ -17,6 +17,24 @@ export const Header = () => {
             <Link to="/profile" className="text-white hover:text-gray-400">
               Profile
             </Link>
+            <ul className="ml-4 mt-2 space-y-2">
+              <li>
+                <Link
+                  to="/profile/view"
+                  className="text-gray-300 hover:text-white"
+                >
+                  Profile - View
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/profile/edit"
+                  className="text-gray-300 hover:text-white"
+                >
+                  Profile - Edit
+                </Link>
+              </li>
+            </ul>
           </li>
         )}
         <li>
