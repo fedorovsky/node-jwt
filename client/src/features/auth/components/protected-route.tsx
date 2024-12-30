@@ -7,9 +7,9 @@ interface ProtectedRouteProps extends React.PropsWithChildren {
   redirectTo?: string;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
-  redirectTo = '/login',
+  redirectTo = '/auth/login',
 }) => {
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
 
@@ -19,5 +19,3 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   return children;
 };
-
-export default ProtectedRoute;
