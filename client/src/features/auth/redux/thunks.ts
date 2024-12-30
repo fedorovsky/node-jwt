@@ -60,13 +60,17 @@ export const validateToken = createAsyncThunk(
     }
 
     try {
-      await axios.get('/api/users/me', {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const response = await axios.post<{ token: string }>(
+        '/api/auth/validate-token',
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
-
-      return { token: token };
+      );
+      localStorage.setItem('token', response.data.token); // Перезаписываем продленый токен
+      return { token: response.data.token };
     } catch (error: any) {
       localStorage.removeItem('token'); // Удаляем недействительный токен
       return rejectWithValue(

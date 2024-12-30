@@ -14,7 +14,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
 
   console.log('======');
-  console.log('1', 'isAuthenticated', isAuthenticated);
+  console.log('ProtectedRoute', 'isAuthenticated', isAuthenticated);
   console.log('======');
 
   if (!isAuthenticated) {

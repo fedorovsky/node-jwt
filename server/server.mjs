@@ -174,7 +174,6 @@ app.post('/auth/login', async (req, res) => {
     res.status(500).json({ message: 'An error occurred during login' });
   }
 });
-
 /**
  * Check if email exists
  */
@@ -208,6 +207,57 @@ app.post('/auth/check-email', async (req, res) => {
     res
       .status(500)
       .json({ message: 'An error occurred while checking the email' });
+  }
+});
+/**
+ * Validate token
+ */
+app.post('/auth/validate-token', async (req, res) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({
+      error: 'Unauthorized',
+      message: 'Authentication token is missing or invalid.',
+    });
+  }
+
+  try {
+    // Проверяем токен на валидность
+    const { payload } = await jwtVerify(token, SECRET_KEY);
+
+    // Проверяем, существует ли пользователь в базе данных
+    const db = await dbPromise;
+    const user = await db.get('SELECT * FROM users WHERE email = ?', [payload.email]);
+
+    if (!user) {
+      return res.status(401).json({
+        error: 'Unauthorized',
+        message: 'Authentication failed. User not found.',
+      });
+    }
+
+    // Генерируем новый токен
+    const newToken = await generateToken({ email: payload.email });
+
+    res.status(200).json({
+      message: 'Token is valid and has been renewed.',
+      token: newToken,
+    });
+  } catch (err) {
+    if (err instanceof errors.JWTExpired) {
+      return res.status(401).json({
+        error: 'Token Expired',
+        message: 'The authentication token has expired. Please log in again.',
+      });
+    }
+
+    console.error(err);
+    return res.status(403).json({
+      error: 'Unauthorized',
+      message: 'Authentication token is invalid.',
+    });
   }
 });
 
