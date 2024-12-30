@@ -36,7 +36,7 @@ export const AuthLoginPage = () => {
     );
 
     if (thunks.login.fulfilled.match(resultAction)) {
-      navigate('/');
+      navigate('/profile');
     } else {
       console.error(
         'Login failed:',
