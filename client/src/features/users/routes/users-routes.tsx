@@ -1,7 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
+import { ProtectedRoute } from '@/features/auth';
 import { UsersMain } from '../pages/users-main.tsx';
 import { UsersList } from '../pages/users-list.tsx';
-import { ProtectedRoute } from '@/features/auth/components/protected-route.tsx';
 
 export const UsersRoutes = () => {
   return (
