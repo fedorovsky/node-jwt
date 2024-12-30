@@ -10,7 +10,7 @@ import {
   CardFooter,
 } from '@/shared/components/ui/card.tsx';
 import { Button } from '@/shared/components/ui/button.tsx';
-import { useAppDispatch } from '@/shared/hooks/useAppDispatch.ts';
+import { useAppDispatch } from '@/shared/hooks/use-app-dispatch.ts';
 import { thunks } from '../redux';
 
 interface FormValues {
