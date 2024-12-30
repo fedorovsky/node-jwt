@@ -10,7 +10,8 @@ import {
   CardFooter,
 } from '@/shared/components/ui/card.tsx';
 import { Button } from '@/shared/components/ui/button.tsx';
-import { useLoginMutation, useLogoutMutation } from '../api/auth-api.ts';
+import { useAppDispatch } from '@/shared/hooks/useAppDispatch.ts';
+import { thunks } from '../redux';
 
 interface FormValues {
   email: string;
@@ -18,14 +19,8 @@ interface FormValues {
 }
 
 export const AuthLoginPage = () => {
-  const [loginUser, { isLoading, isError, error }] = useLoginMutation();
-  const [logoutUser] = useLogoutMutation();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
-
-  console.log('=======');
-  console.log('isError', isError);
-  console.log('ErrorFromServer', error);
-  console.log('=======');
 
   const {
     register,
@@ -35,16 +30,48 @@ export const AuthLoginPage = () => {
 
   const onSubmit: SubmitHandler<FormValues> = async data => {
     console.log('Form Data:', data);
-    await loginUser({ email: data.email, password: data.password });
-    navigate('/');
+
+    const resultAction = await dispatch(
+      thunks.login({ email: data.email, password: data.password }),
+    );
+
+    if (thunks.login.fulfilled.match(resultAction)) {
+      navigate('/');
+    } else {
+      console.error(
+        'Login failed:',
+        resultAction.payload || resultAction.error,
+      );
+    }
+  };
+
+  const handleLogin = () => {
+    dispatch(
+      thunks.login({
+        email: 'anton.fedorovsky@gmail.com',
+        password: '123123',
+      }),
+    );
+  };
+
+  const handleRegister = () => {
+    dispatch(
+      thunks.register({
+        email: `anton.fedorovsky+${Date.now()}@gmail.com`,
+        password: '123123',
+      }),
+    );
   };
 
   const handleLogout = () => {
-    logoutUser();
+    dispatch(thunks.logout());
   };
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex flex-col items-center justify-center gap-1">
+      <Button onClick={handleLogin}>login</Button>
+      <Button onClick={handleRegister}>register</Button>
+      <Button onClick={handleLogout}>logout</Button>
       <Card>
         <CardHeader>
           <CardTitle>Login</CardTitle>
@@ -91,7 +118,7 @@ export const AuthLoginPage = () => {
                 </p>
               )}
             </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full" disabled={false}>
               Login
             </Button>
             <Button
