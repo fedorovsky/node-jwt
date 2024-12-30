@@ -41,6 +41,13 @@ export const Header = () => {
           <Link to="/users" className="text-white hover:text-gray-400">
             Users
           </Link>
+          <ul className="ml-4 mt-2 space-y-2">
+            <li>
+              <Link to="/users/list" className="text-gray-300 hover:text-white">
+                Users - List
+              </Link>
+            </li>
+          </ul>
         </li>
         <li>
           <Link to="/auth" className="text-white hover:text-gray-400">
