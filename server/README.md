@@ -1,84 +1,123 @@
-## API Endpoints
+# API Documentation
 
-### Authentication Routes
+## Authentication Routes
 
-#### Register a New User
-
+### Register a New User
 - **URL**: `/auth/register`
 - **Method**: `POST`
-- **Description**: Registers a new user by creating an account.
+- **Description**: Creates a new user account.
 - **Request Body**:
-  - `email` (string, required) - The email for the account.
-  - `password` (string, required) - The password for the account.
-- **Response**: Returns a message confirming registration and a JWT token if successful.
+  - `email` (string, required) - User's email.
+  - `password` (string, required) - User's password.
+- **Response**: Confirms registration and returns a JWT token.
 
-#### User Login
+---
 
+### User Login
 - **URL**: `/auth/login`
 - **Method**: `POST`
-- **Description**: Logs in an existing user and returns a JWT token.
+- **Description**: Logs in a user and provides a JWT token.
 - **Request Body**:
-  - `email` (string, required) - The email for the account.
-  - `password` (string, required) - The password for the account.
-- **Response**: Returns a message confirming login and a JWT token if credentials are valid.
+  - `email` (string, required) - User's email.
+  - `password` (string, required) - User's password.
+- **Response**: Confirms login and returns a JWT token.
 
-#### Check Email Availability
+---
 
+### Check Email Availability
 - **URL**: `/auth/check-email`
 - **Method**: `POST`
-- **Description**: Checks if an email is already registered in the system.
+- **Description**: Verifies if an email is already registered.
 - **Request Body**:
-    - `email` (string, required) - The email to check for availability.
+  - `email` (string, required) - Email to check.
 - **Response**:
-  - **If the email is already registered:**
+  - **Exists**:
     ```json
-    {
-      "exists": true,
-      "message": "Email is already registered"
-    }
+    { "exists": true, "message": "Email is already registered" }
+    ```
+  - **Doesn't Exist**:
+    ```json
+    { "exists": false, "message": "Email is available" }
+    ```
+
+---
+
+### Validate and Renew Token
+- **URL**: `/auth/validate-token`
+- **Method**: `POST`
+- **Description**: Validates and renews a JWT token.
+- **Headers**:
+  - `Authorization` (string, required) - `Bearer <token>`.
+- **Responses**:
+  - **Success** (200):
+    ```json
+    { "message": "Token is valid and has been renewed.", "token": "<newToken>" }
+    ```
+  - **Failure** (401):
+    - Token Missing/Invalid:
+      ```json
+      { "error": "Unauthorized", "message": "Authentication token is missing or invalid." }
+      ```
+    - Token Expired:
+      ```json
+      { "error": "Token Expired", "message": "The authentication token has expired. Please log in again." }
+      ```
+    - User Not Found:
+      ```json
+      { "error": "Unauthorized", "message": "Authentication failed. User not found." }
+      ```
+    - Invalid Token:
+      ```json
+      { "error": "Unauthorized", "message": "Authentication token is invalid." }
+      ```
+
+---
 
 ## Protected Routes
 
 ### Protected Data Access
-
 - **URL**: `/protected`
 - **Method**: `GET`
-- **Description**: Accesses protected content. Requires a valid JWT token in the `Authorization` header.
+- **Description**: Access protected content.
 - **Headers**:
-  - `Authorization` (string, required) - Bearer token obtained from login.
-- **Response**: Returns a message and a list of registered users (excluding passwords).
+  - `Authorization` (string, required) - `Bearer <token>`.
+- **Response**: Returns a message and list of registered users (excluding passwords).
+
+---
 
 ## Users
 
 ### Get All Users
 - **URL**: `/users`
 - **Method**: `GET`
-- **Description**: Retrieves a list of all registered users.
+- **Description**: Retrieves all registered users.
+
+---
 
 ### Remove All Users
 - **URL**: `/users/remove-all`
 - **Method**: `DELETE`
-- **Description**: Deletes all registered users from the system.
+- **Description**: Deletes all users from the system.
 
-## Postman
+---
 
-The file `tools/postman.json` contains a pre-configured Postman collection for testing this API. To import it into Postman:
+## Postman Collection
+- **File**: `tools/postman.json`
+- **Import Steps**:
+  1. Open Postman.
+  2. Click **Import** > **Upload Files**.
+  3. Select `tools/postman.json`.
 
-1. Open Postman.
-2. Click on **Import** in the top left corner.
-3. Select **Upload Files** and choose `tools/postman.json`.
-4. The collection will be added, allowing you to test the API endpoints easily.
+---
 
 ## Docker
 
-Build a Docker Image from the current directory with the name node-jwt-image
-
+### Build Image
 ```bash
 docker build -t node-jwt-server-image -f docker/Dockerfile .
 ```
 
-Run the container in detached mode, map port 3000 to 3000, and name it node-jwt-container
-
+### Run Container
 ```bash
 docker run -d -p 3000:3000 --name node-jwt-server-container node-jwt-server-image
 ```
