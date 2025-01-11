@@ -1,5 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { delay } from '@/shared/utils/delay.ts';
 
 export const register = createAsyncThunk(
   'auth/register',
@@ -69,6 +70,7 @@ export const validateToken = createAsyncThunk(
           },
         },
       );
+      await delay(2000);
       localStorage.setItem('token', response.data.token); // Перезаписываем продленый токен
       return { token: response.data.token };
     } catch (error: any) {
