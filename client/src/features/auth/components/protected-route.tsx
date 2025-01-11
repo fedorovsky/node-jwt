@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Navigate } from 'react-router-dom';
-import { selectIsAuthenticated } from '../redux/selectors';
+import { selectIsAuthenticated, selectIsAuthChecked } from '../redux/selectors';
 import { useAppSelector } from '@/shared/hooks/use-app-selector.ts'; // Импортируйте ваш селектор
 
 interface ProtectedRouteProps extends React.PropsWithChildren {
@@ -12,10 +12,11 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   redirectTo = '/auth/login',
 }) => {
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const isAuthChecked = useAppSelector(selectIsAuthChecked);
 
-  console.log('======');
-  console.log('ProtectedRoute', 'isAuthenticated', isAuthenticated);
-  console.log('======');
+  if (!isAuthChecked) {
+    return <h1>ProtectedRoute ...</h1>;
+  }
 
   if (!isAuthenticated) {
     return <Navigate to={redirectTo} />;
