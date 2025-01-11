@@ -121,3 +121,15 @@ docker build -t node-jwt-server-image -f docker/Dockerfile .
 ```bash
 docker run -d -p 3000:3000 --name node-jwt-server-container node-jwt-server-image
 ```
+
+## Migration
+
+### make
+```bash
+npx knex --knexfile ./knexfile.cjs migrate:make create_users_table
+```
+
+### run
+```bash
+npx knex --knexfile ./knexfile.cjs migrate:latest
+```

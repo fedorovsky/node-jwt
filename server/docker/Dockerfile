@@ -1,20 +1,22 @@
-# Указываем базовый образ
+# Specify the base image
 FROM node:20-alpine
 
-# Создаём директорию для приложения
+# Create the application directory
 WORKDIR /usr/app
 
-# Копируем package.json и package-lock.json в рабочую директорию
+# Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
 
-# Устанавливаем зависимости
+# Install dependencies
 RUN npm install
 
-# Копируем весь исходный код в рабочую директорию
+# Copy all source code to the working directory
 COPY server.mjs ./
+COPY knexfile.cjs ./
+COPY migrations ./migrations
 
-# Открываем порт, который будет использоваться приложением
+# Expose the port that the application will use
 EXPOSE 3000
 
-# Команда для запуска приложения
-CMD [ "node", "server.mjs" ]
+# Command to run migrations and start the application
+CMD [ "sh", "-c", "npm run migrate && npm start" ]
