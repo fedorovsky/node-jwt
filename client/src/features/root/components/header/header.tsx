@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/features/auth';
+import { UserInfo } from './user-info';
 
 export const Header = () => {
   const { isAuthenticated } = useAuth();
 
   return (
-    <nav className="container mx-auto p-4">
+    <nav className="container mx-auto flex items-center justify-between p-4">
       <ul className="flex space-x-4">
         <li>
           <Link to="/" className="text-white hover:text-gray-400">
@@ -70,6 +71,7 @@ export const Header = () => {
           </ul>
         </li>
       </ul>
+      <UserInfo />
     </nav>
   );
 };
