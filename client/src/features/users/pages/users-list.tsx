@@ -5,7 +5,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/shared/components/ui/table';
+} from '@/modules/styled-system/components/ui/table';
 import { useFetchUsersQuery } from '../api/user-api';
 
 export const UsersList = () => {

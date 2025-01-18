@@ -1,15 +1,15 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
-import { Input } from '@/shared/components/ui/input.tsx';
-import { Label } from '@/shared/components/ui/label.tsx';
+import { Input } from '@/modules/styled-system/components/ui/input.tsx';
+import { Label } from '@/modules/styled-system/components/ui/label.tsx';
 import {
   Card,
   CardHeader,
   CardTitle,
   CardContent,
   CardFooter,
-} from '@/shared/components/ui/card.tsx';
-import { Button } from '@/shared/components/ui/button.tsx';
+} from '@/modules/styled-system/components/ui/card.tsx';
+import { Button } from '@/modules/styled-system/components/ui/button.tsx';
 import { useAppDispatch } from '@/shared/hooks/use-app-dispatch.ts';
 import { thunks } from '../redux';
 
