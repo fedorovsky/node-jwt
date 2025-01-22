@@ -1,9 +1,9 @@
-import { RootRoutes } from '../routes/root-routes';
-import { Header } from '@/features/root/components/header';
-import { Footer } from '@/features/root/components/footer';
+import { Outlet } from 'react-router-dom';
+import { Header } from './header';
+import { Footer } from './footer';
 import { useValidateToken } from '@/features/auth/hooks/use-validate-token.ts';
 
-export const RootPage = () => {
+export const Layout = () => {
   useValidateToken();
 
   return (
@@ -12,7 +12,7 @@ export const RootPage = () => {
         <Header />
       </header>
       <main className="flex-1 overflow-y-auto p-5">
-        <RootRoutes />
+        <Outlet />
       </main>
       <footer className="bg-primary py-4 text-white">
         <Footer />
