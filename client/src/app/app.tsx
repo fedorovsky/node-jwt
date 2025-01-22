@@ -1,17 +1,13 @@
 import React from 'react';
-import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
-import { RootPage } from '@/features/root';
-import { store } from './store';
+import { RouterProvider } from '@/app/providers/router-provider.tsx';
+import { ReduxProvider } from '@/app/providers/redux-provider.tsx';
 
 export function App() {
   return (
     <React.StrictMode>
-      <Provider store={store}>
-        <BrowserRouter>
-          <RootPage />
-        </BrowserRouter>
-      </Provider>
+      <ReduxProvider>
+        <RouterProvider />
+      </ReduxProvider>
     </React.StrictMode>
   );
 }
