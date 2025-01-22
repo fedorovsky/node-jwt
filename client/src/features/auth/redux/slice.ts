@@ -22,7 +22,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: builder => {
-    // Register
+    // AuthRegisterPage
     builder.addCase(register.pending, state => {
       state.loading = true;
       state.error = null;
