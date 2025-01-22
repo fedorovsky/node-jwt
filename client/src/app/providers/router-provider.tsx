@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Layout } from '@/app/layout/layout';
-import { ProfileRoutes } from '@/features/profile';
+import { ProfileRoutes } from '@/pages/profile';
 import { AuthRoutes } from '@/pages/auth';
-import { UsersRoutes } from '@/features/users';
+import { UsersRoutes } from '@/pages/users';
 import { HomePage } from '@/pages/home';
 
 export const RouterProvider = () => {

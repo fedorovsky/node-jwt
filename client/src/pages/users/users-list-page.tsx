@@ -6,9 +6,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/modules/styled-system/components/ui/table';
-import { useFetchUsersQuery } from '../api/user-api';
+import { useFetchUsersQuery } from '@/features/users/api/user-api';
 
-export const UsersList = () => {
+export const UsersListPage = () => {
   const { data, isLoading, error } = useFetchUsersQuery();
 
   return (

@@ -1,8 +1,8 @@
 import { Routes, Route } from 'react-router-dom';
 import { ProtectedRoute } from '@/features/auth';
-import { ProfilePage } from '../pages/profile-page';
-import { ProfileViewPage } from '../pages/profile-view-page.tsx';
-import { ProfileEditPage } from '../pages/profile-edit-page.tsx';
+import { ProfilePage } from './profile-page.tsx';
+import { ProfileViewPage } from './profile-view-page.tsx';
+import { ProfileEditPage } from './profile-edit-page.tsx';
 
 export const ProfileRoutes = () => {
   return (
