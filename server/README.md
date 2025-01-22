@@ -2,7 +2,7 @@
 
 ## Authentication Routes
 
-### Register a New User
+### AuthRegisterPage a New User
 - **URL**: `/auth/register`
 - **Method**: `POST`
 - **Description**: Creates a new user account.

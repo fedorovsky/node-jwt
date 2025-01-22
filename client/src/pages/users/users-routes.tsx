@@ -1,17 +1,17 @@
 import { Routes, Route } from 'react-router-dom';
 import { ProtectedRoute } from '@/features/auth';
-import { UsersMain } from '../pages/users-main.tsx';
-import { UsersList } from '../pages/users-list.tsx';
+import { UsersPage } from './users-page.tsx';
+import { UsersListPage } from './users-list-page.tsx';
 
 export const UsersRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<UsersMain />}>
+      <Route path="/" element={<UsersPage />}>
         <Route
           path="list"
           element={
             <ProtectedRoute>
-              <UsersList />
+              <UsersListPage />
             </ProtectedRoute>
           }
         />

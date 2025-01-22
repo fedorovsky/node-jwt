@@ -1,9 +1,9 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Layout } from '@/app/layout/layout.tsx';
-import { ProfileRoutes } from '@/features/profile';
-import { AuthRoutes } from '@/features/auth';
-import { UsersRoutes } from '@/features/users';
-import { HomePage } from '@/features/home';
+import { Layout } from '@/app/layout/layout';
+import { ProfileRoutes } from '@/pages/profile';
+import { AuthRoutes } from '@/pages/auth';
+import { UsersRoutes } from '@/pages/users';
+import { HomePage } from '@/pages/home';
 
 export const RouterProvider = () => {
   return (

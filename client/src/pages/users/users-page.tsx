@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom';
 
-export const UsersMain = () => {
+export const UsersPage = () => {
   return (
     <div>
       <h2 className="mb-4 text-4xl font-bold leading-tight tracking-tight text-gray-800">

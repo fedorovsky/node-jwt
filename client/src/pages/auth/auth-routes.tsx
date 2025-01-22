@@ -1,7 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
-import { AuthLoginPage } from '../pages/auth-login-page';
-import { AuthRegisterPage } from '../pages/auth-register-page';
-import { AuthPage } from '../pages/auth-page';
+import { AuthLoginPage } from './auth-login-page';
+import { AuthRegisterPage } from './auth-register-page.tsx';
+import { AuthPage } from './auth-page.tsx';
 
 export const AuthRoutes = () => {
   return (
