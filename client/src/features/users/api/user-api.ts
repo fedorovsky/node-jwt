@@ -1,4 +1,4 @@
-import { rootApi, ApiTags } from '@/app/root-api.ts';
+import { rootApi, ApiTags } from '@/shared/api/root-api.ts';
 
 type User = {
   id: number;
