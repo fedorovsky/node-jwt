@@ -1,4 +1,4 @@
-import { Button } from '@/modules/styled-system/components/ui/button';
+import { Button } from '@/shared/styled-system/components/ui/button';
 import {
   Table,
   TableBody,
@@ -6,7 +6,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/modules/styled-system/components/ui/table';
+} from '@/shared/styled-system/components/ui/table';
 import { useState } from 'react';
 
 type User = {
