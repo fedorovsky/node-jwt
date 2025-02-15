@@ -6,10 +6,10 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/modules/styled-system/components/ui/card.tsx';
-import { Label } from '@/modules/styled-system/components/ui/label.tsx';
-import { Input } from '@/modules/styled-system/components/ui/input.tsx';
-import { Button } from '@/modules/styled-system/components/ui/button.tsx';
+} from '@/shared/styled-system/components/ui/card.tsx';
+import { Label } from '@/shared/styled-system/components/ui/label.tsx';
+import { Input } from '@/shared/styled-system/components/ui/input.tsx';
+import { Button } from '@/shared/styled-system/components/ui/button.tsx';
 import { useAppDispatch } from '@/shared/hooks/use-app-dispatch.ts';
 import { thunks } from '../../redux';
 
