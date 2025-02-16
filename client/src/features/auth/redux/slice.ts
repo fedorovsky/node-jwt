@@ -22,7 +22,9 @@ const authSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: builder => {
-    // AuthRegisterPage
+    /**
+     * Register
+     */
     builder.addCase(register.pending, state => {
       state.loading = true;
       state.error = null;
@@ -39,7 +41,9 @@ const authSlice = createSlice({
       state.loading = false;
       state.error = action.payload as string;
     });
-    // Login
+    /**
+     * Login
+     */
     builder.addCase(login.pending, state => {
       state.loading = true;
       state.error = null;
@@ -57,7 +61,9 @@ const authSlice = createSlice({
       state.error = action.payload as string;
       state.token = null;
     });
-    // Logout
+    /**
+     * Logout
+     */
     builder.addCase(logout.pending, state => {
       state.loading = true;
       state.error = null;
@@ -71,7 +77,9 @@ const authSlice = createSlice({
       state.loading = false;
       state.error = action.payload as string;
     });
-    // Validate Token
+    /**
+     * Validate Token
+     */
     builder.addCase(validateToken.pending, state => {
       state.loading = true;
       state.error = null;
