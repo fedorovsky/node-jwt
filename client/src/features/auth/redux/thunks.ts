@@ -2,15 +2,23 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { delay } from '@/shared/utils/delay.ts';
 
+interface RegisterResponse {
+  message: string;
+  token: string;
+}
+
 export const register = createAsyncThunk(
   'auth/register',
   async (data: { email: string; password: string }, { rejectWithValue }) => {
     try {
-      const response = await axios.post('/api/auth/register', data);
+      const response = await axios.post<RegisterResponse>(
+        '/api/auth/register',
+        data,
+      );
       localStorage.setItem('token', response.data.token);
 
       return {
-        token: response.data.token as string,
+        token: response.data.token,
       };
     } catch (error: any) {
       return rejectWithValue(
@@ -20,15 +28,20 @@ export const register = createAsyncThunk(
   },
 );
 
+interface LoginResponse {
+  message: string;
+  token: string;
+}
+
 export const login = createAsyncThunk(
   'auth/login',
   async (data: { email: string; password: string }, { rejectWithValue }) => {
     try {
-      const response = await axios.post('/api/auth/login', data);
+      const response = await axios.post<LoginResponse>('/api/auth/login', data);
       localStorage.setItem('token', response.data.token);
 
       return {
-        token: response.data.token as string,
+        token: response.data.token,
       };
     } catch (error: any) {
       localStorage.removeItem('token');
