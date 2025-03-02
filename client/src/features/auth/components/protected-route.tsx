@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Navigate } from 'react-router-dom';
 import { selectIsAuthenticated, selectIsAuthChecked } from '../redux/selectors';
-import { useAppSelector } from '@/shared/hooks/use-app-selector.ts'; // Импортируйте ваш селектор
+import { useAppSelector } from '@/shared/hooks/use-app-selector.ts';
 
 interface ProtectedRouteProps extends React.PropsWithChildren {
   redirectTo?: string;
