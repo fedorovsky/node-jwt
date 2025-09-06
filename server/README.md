@@ -2,8 +2,8 @@
 
 ## Authentication Routes
 
-### AuthRegisterPage a New User
-- **URL**: `/auth/register`
+### Register User
+- **URL**: `/auth/signup`
 - **Method**: `POST`
 - **Description**: Creates a new user account.
 - **Request Body**:
@@ -13,8 +13,8 @@
 
 ---
 
-### User Login
-- **URL**: `/auth/login`
+### Login User
+- **URL**: `/auth/signin`
 - **Method**: `POST`
 - **Description**: Logs in a user and provides a JWT token.
 - **Request Body**:
@@ -88,7 +88,7 @@
 ## Users
 
 ### Get All Users
-- **URL**: `/users`
+- **URL**: `/users/all`
 - **Method**: `GET`
 - **Description**: Retrieves all registered users.
 
