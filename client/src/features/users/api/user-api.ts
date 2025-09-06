@@ -12,15 +12,7 @@ export const userApi = rootApi.injectEndpoints({
       query: () => '/users/all',
       providesTags: [ApiTags.Users],
     }),
-    addUser: builder.mutation({
-      query: newUser => ({
-        url: '/users',
-        method: 'POST',
-        body: newUser,
-      }),
-      invalidatesTags: [ApiTags.Users],
-    }),
   }),
 });
 
-export const { useFetchUsersQuery, useAddUserMutation } = userApi;
+export const { useFetchUsersQuery } = userApi;

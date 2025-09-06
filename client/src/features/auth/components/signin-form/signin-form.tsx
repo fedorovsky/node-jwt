@@ -18,7 +18,7 @@ interface FormValues {
   password: string;
 }
 
-export const LoginForm = () => {
+export const SigninForm = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 

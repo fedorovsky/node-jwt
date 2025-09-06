@@ -19,7 +19,7 @@ interface FormValues {
   confirmPassword: string;
 }
 
-export const RegisterForm = () => {
+export const SignupForm = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
