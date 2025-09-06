@@ -12,17 +12,17 @@ app.use(express.json());
 app.use(cors());
 app.use(morgan('dev'));
 
-const SECRET_KEY = Buffer.from('your_secret_key', 'utf-8');
+const JWT_SECRET_KEY = Buffer.from('your_secret_key', 'utf-8');
 
 // Initialize knex instance using configuration from knexfile.cjs
 const db = knex(knexConfig.development);
 
 // Function to generate a JWT
-const generateToken = async (payload) => {
+const generateJwtToken = async (payload) => {
   return new SignJWT(payload)
     .setProtectedHeader({ alg: 'HS256' })
     .setExpirationTime('1h')
-    .sign(SECRET_KEY);
+    .sign(JWT_SECRET_KEY);
 };
 
 /**
@@ -40,7 +40,7 @@ const authenticateToken = async (req, res, next) => {
   }
 
   try {
-    const { payload } = await jwtVerify(token, SECRET_KEY);
+    const { payload } = await jwtVerify(token, JWT_SECRET_KEY);
     const user = await db('users').where({ email: payload.email }).first();
 
     if (!user) {
@@ -69,7 +69,7 @@ const authenticateToken = async (req, res, next) => {
 /**
  * Registration
  */
-app.post('/auth/register', async (req, res) => {
+app.post('/auth/signup', async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !/\S+@\S+\.\S+/.test(email)) {
@@ -87,7 +87,7 @@ app.post('/auth/register', async (req, res) => {
 
     await db('users').insert({ email, password: hashedPassword, username });
 
-    const token = await generateToken({ email });
+    const token = await generateJwtToken({ email });
 
     res.status(201).json({ message: 'User registered successfully', token });
   } catch (err) {
@@ -99,7 +99,7 @@ app.post('/auth/register', async (req, res) => {
 /**
  * Login
  */
-app.post('/auth/login', async (req, res) => {
+app.post('/auth/signin', async (req, res) => {
   const { email, password } = req.body;
 
   try {
@@ -113,7 +113,7 @@ app.post('/auth/login', async (req, res) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    const token = await generateToken({ email: user.email });
+    const token = await generateJwtToken({ email: user.email });
 
     res.json({ message: 'Login successful', token });
   } catch (err) {
@@ -165,7 +165,7 @@ app.post('/auth/validate-token', async (req, res) => {
   }
 
   try {
-    const { payload } = await jwtVerify(token, SECRET_KEY);
+    const { payload } = await jwtVerify(token, JWT_SECRET_KEY);
     const user = await db('users').where({ email: payload.email }).first();
 
     if (!user) {
@@ -175,7 +175,7 @@ app.post('/auth/validate-token', async (req, res) => {
       });
     }
 
-    const newToken = await generateToken({ email: payload.email });
+    const newToken = await generateJwtToken({ email: payload.email });
 
     res.status(200).json({
       message: 'Token is valid and has been renewed.',

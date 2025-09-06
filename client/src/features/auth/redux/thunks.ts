@@ -8,11 +8,11 @@ interface RegisterResponse {
 }
 
 export const register = createAsyncThunk(
-  'auth/register',
+  'auth/signup',
   async (data: { email: string; password: string }, { rejectWithValue }) => {
     try {
       const response = await axios.post<RegisterResponse>(
-        '/api/auth/register',
+        '/api/auth/signup',
         data,
       );
       localStorage.setItem('token', response.data.token);
@@ -34,10 +34,10 @@ interface LoginResponse {
 }
 
 export const login = createAsyncThunk(
-  'auth/login',
+  'auth/signin',
   async (data: { email: string; password: string }, { rejectWithValue }) => {
     try {
-      const response = await axios.post<LoginResponse>('/api/auth/login', data);
+      const response = await axios.post<LoginResponse>('/api/auth/signin', data);
       localStorage.setItem('token', response.data.token);
 
       return {
