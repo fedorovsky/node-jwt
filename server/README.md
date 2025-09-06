@@ -102,7 +102,7 @@
 ---
 
 ## Postman Collection
-- **File**: `tools/postman.json`
+- **File**: `tools/node-jwt.postman_collection.json`
 - **Import Steps**:
   1. Open Postman.
   2. Click **Import** > **Upload Files**.
