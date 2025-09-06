@@ -9,7 +9,7 @@ type User = {
 export const userApi = rootApi.injectEndpoints({
   endpoints: builder => ({
     fetchUsers: builder.query<User[], void>({
-      query: () => '/users',
+      query: () => '/users/all',
       providesTags: [ApiTags.Users],
     }),
     addUser: builder.mutation({

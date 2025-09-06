@@ -200,7 +200,7 @@ app.post('/auth/validate-token', async (req, res) => {
 /**
  * Users - get all
  */
-app.get('/users', async (req, res) => {
+app.get('/users/all', async (req, res) => {
   try {
     const users = await db('users').select('id', 'email', 'username');
     res.status(200).json(users);
