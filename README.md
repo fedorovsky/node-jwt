@@ -30,7 +30,9 @@ This setup provides an integrated environment for seamless frontend and backend 
 | Docker Stop                      | Stop the services without removing containers.                  | `docker compose -f docker/docker-compose.yml stop`                                                  |
 
 
-Before building and running the Docker container, you need to manually create a `database.db` file. This step ensures that the Docker volume correctly maps to the file system and the application can access the database.
+Before building and running the Docker container, you need to manually create a `database.db` file. 
+Example: `touch database.db` in the root directory of the project.
+This step ensures that the Docker volume correctly maps to the file system and the application can access the database.
 
 
 ## Checking the Work:
