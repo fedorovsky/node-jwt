@@ -29,7 +29,7 @@ export const HomePage = () => {
       <h1 className="mb-4 text-4xl font-bold leading-tight tracking-tight text-gray-800">
         Home
       </h1>
-      <Button onClick={handleClick}>/api/users</Button>
+      <Button onClick={handleClick}>/api/users/all</Button>
       {users.length !== 0 && (
         <Table className="mt-2">
           <TableHeader>
