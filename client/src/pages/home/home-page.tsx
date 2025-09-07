@@ -19,7 +19,7 @@ export const HomePage = () => {
   const [users, setUsers] = useState<User[]>([]);
 
   const handleClick = async () => {
-    const response = await fetch('/api/users');
+    const response = await fetch('/api/users/all');
     const data: User[] = await response.json();
     setUsers(data);
   };
