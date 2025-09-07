@@ -1,14 +1,14 @@
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
+import { Input } from '@/shared/styled-system/components/ui/input.tsx';
+import { Label } from '@/shared/styled-system/components/ui/label.tsx';
 import {
   Card,
-  CardContent,
-  CardFooter,
   CardHeader,
   CardTitle,
+  CardContent,
+  CardFooter,
 } from '@/shared/styled-system/components/ui/card.tsx';
-import { Label } from '@/shared/styled-system/components/ui/label.tsx';
-import { Input } from '@/shared/styled-system/components/ui/input.tsx';
 import { Button } from '@/shared/styled-system/components/ui/button.tsx';
 import { useAppDispatch } from '@/shared/hooks/use-app-dispatch.ts';
 import { thunks } from '../../redux';
@@ -16,10 +16,9 @@ import { thunks } from '../../redux';
 interface FormValues {
   email: string;
   password: string;
-  confirmPassword: string;
 }
 
-export const SignupForm = () => {
+export const Login = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -27,31 +26,55 @@ export const SignupForm = () => {
     register,
     handleSubmit,
     formState: { errors },
-    watch,
   } = useForm<FormValues>();
 
   const onSubmit: SubmitHandler<FormValues> = async data => {
     console.log('Form Data:', data);
 
     const resultAction = await dispatch(
-      thunks.register({ email: data.email, password: data.password }),
+      thunks.login({ email: data.email, password: data.password }),
     );
 
-    if (thunks.register.fulfilled.match(resultAction)) {
-      navigate('/users');
+    if (thunks.login.fulfilled.match(resultAction)) {
+      navigate('/profile/view');
     } else {
       console.error(
-        'AuthRegisterPage failed:',
+        'Login failed:',
         resultAction.payload || resultAction.error,
       );
     }
   };
 
+  const handleLogin = () => {
+    dispatch(
+      thunks.login({
+        email: 'anton.fedorovsky@gmail.com',
+        password: '123123',
+      }),
+    );
+  };
+
+  const handleRegister = () => {
+    dispatch(
+      thunks.register({
+        email: `anton.fedorovsky+${Date.now()}@gmail.com`,
+        password: '123123',
+      }),
+    );
+  };
+
+  const handleLogout = () => {
+    dispatch(thunks.logout());
+  };
+
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex flex-col items-center justify-center gap-1">
+      <Button onClick={handleLogin}>login</Button>
+      <Button onClick={handleRegister}>register</Button>
+      <Button onClick={handleLogout}>logout</Button>
       <Card>
         <CardHeader>
-          <CardTitle>Register</CardTitle>
+          <CardTitle>Login</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -95,34 +118,23 @@ export const SignupForm = () => {
                 </p>
               )}
             </div>
-            <div className="mb-4">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                type="password"
-                id="confirm-password"
-                placeholder="Enter your password"
-                {...register('confirmPassword', {
-                  required: 'Confirm Password is required',
-                  validate: value =>
-                    value === watch('password') || 'Passwords do not match',
-                })}
-              />
-              {errors.confirmPassword && (
-                <p className="mt-1 text-sm text-red-500">
-                  {errors.confirmPassword.message}
-                </p>
-              )}
-            </div>
             <Button type="submit" className="w-full" disabled={false}>
-              Register
+              Login
+            </Button>
+            <Button
+              type="button"
+              className="mt-2 w-full"
+              onClick={handleLogout}
+            >
+              Logout
             </Button>
           </form>
         </CardContent>
         <CardFooter>
           <p>
-            Have an account?{' '}
-            <Link to="/auth/login" className="text-blue-500 hover:underline">
-              Login
+            Don't have an account?{' '}
+            <Link to="/auth/register" className="text-blue-500 hover:underline">
+              Register
             </Link>
           </p>
         </CardFooter>

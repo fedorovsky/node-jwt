@@ -8,7 +8,7 @@ interface RegisterResponse {
 }
 
 export const register = createAsyncThunk(
-  'auth/signup',
+  'auth/register',
   async (data: { email: string; password: string }, { rejectWithValue }) => {
     try {
       const response = await axios.post<RegisterResponse>(
@@ -34,7 +34,7 @@ interface LoginResponse {
 }
 
 export const login = createAsyncThunk(
-  'auth/signin',
+  'auth/login',
   async (data: { email: string; password: string }, { rejectWithValue }) => {
     try {
       const response = await axios.post<LoginResponse>('/api/auth/signin', data);

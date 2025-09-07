@@ -67,9 +67,9 @@ const authenticateToken = async (req, res, next) => {
 };
 
 /**
- * Registration
+ * Register
  */
-app.post('/auth/signup', async (req, res) => {
+app.post('/auth/register', async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !/\S+@\S+\.\S+/.test(email)) {
@@ -99,7 +99,7 @@ app.post('/auth/signup', async (req, res) => {
 /**
  * Login
  */
-app.post('/auth/signin', async (req, res) => {
+app.post('/auth/login', async (req, res) => {
   const { email, password } = req.body;
 
   try {
