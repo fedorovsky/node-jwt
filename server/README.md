@@ -1,135 +1,108 @@
-# API Documentation
+# node-jwt · server
 
-## Authentication Routes
+Express API with JWT authentication backed by SQLite (via knex).
 
-### Register User
-- **URL**: `/auth/signup`
-- **Method**: `POST`
-- **Description**: Creates a new user account.
-- **Request Body**:
-  - `email` (string, required) - User's email.
-  - `password` (string, required) - User's password.
-- **Response**: Confirms registration and returns a JWT token.
+## Quick start
 
----
+```bash
+npm install
+npm run migrate
+npm run dev                 # restarts on file changes
+```
 
-### Login User
-- **URL**: `/auth/signin`
-- **Method**: `POST`
-- **Description**: Logs in a user and provides a JWT token.
-- **Request Body**:
-  - `email` (string, required) - User's email.
-  - `password` (string, required) - User's password.
-- **Response**: Confirms login and returns a JWT token.
+The API listens on `http://localhost:3000` by default.
 
----
+## Scripts
 
-### Check Email Availability
-- **URL**: `/auth/check-email`
-- **Method**: `POST`
-- **Description**: Verifies if an email is already registered.
-- **Request Body**:
-  - `email` (string, required) - Email to check.
-- **Response**:
-  - **Exists**:
-    ```json
-    { "exists": true, "message": "Email is already registered" }
-    ```
-  - **Doesn't Exist**:
-    ```json
-    { "exists": false, "message": "Email is available" }
-    ```
+| Script                           | Purpose                               |
+| -------------------------------- | ------------------------------------- |
+| `npm start`                      | Run the server                        |
+| `npm run dev`                    | Run with file watching                |
+| `npm test`                       | Run the test suite (in-memory SQLite) |
+| `npm run migrate`                | Apply pending migrations              |
+| `npm run migrate:make -- <name>` | Create a new migration                |
+| `npm run migrate:rollback`       | Roll back the last migration batch    |
+| `npm run format`                 | Format sources with Prettier          |
 
----
+## Configuration
 
-### Validate and Renew Token
-- **URL**: `/auth/validate-token`
-- **Method**: `POST`
-- **Description**: Validates and renews a JWT token.
-- **Headers**:
-  - `Authorization` (string, required) - `Bearer <token>`.
-- **Responses**:
-  - **Success** (200):
-    ```json
-    { "message": "Token is valid and has been renewed.", "token": "<newToken>" }
-    ```
-  - **Failure** (401):
-    - Token Missing/Invalid:
-      ```json
-      { "error": "Unauthorized", "message": "Authentication token is missing or invalid." }
-      ```
-    - Token Expired:
-      ```json
-      { "error": "Token Expired", "message": "The authentication token has expired. Please log in again." }
-      ```
-    - User Not Found:
-      ```json
-      { "error": "Unauthorized", "message": "Authentication failed. User not found." }
-      ```
-    - Invalid Token:
-      ```json
-      { "error": "Unauthorized", "message": "Authentication token is invalid." }
-      ```
+Settings live in [`src/config/index.mjs`](src/config/index.mjs): port `3000`, JWT secret and lifetime (`1h`), bcrypt cost and CORS origin. Environment variables are intentionally not used yet; when they are introduced, this module is the single place to change.
 
----
+## Project layout
 
-## Protected Routes
+```
+src/
+  server.mjs              entry point: config, DB, HTTP server, graceful shutdown
+  app.mjs                 composition root: wires dependencies and mounts routers
+  config/                 application settings and knex factory
+  lib/                    HttpError, asyncHandler, token service (jose)
+  middleware/             validate, authenticate, error handling
+  modules/
+    auth/                 schemas → routes → controller → service
+    users/                repository, controller, routes
+    health/               liveness endpoint
+test/                     node:test suites against an in-memory database
+migrations/               knex migrations (CommonJS, used by the knex CLI)
+```
 
-### Protected Data Access
-- **URL**: `/protected`
-- **Method**: `GET`
-- **Description**: Access protected content.
-- **Headers**:
-  - `Authorization` (string, required) - `Bearer <token>`.
-- **Response**: Returns a message and list of registered users (excluding passwords).
+Layering rule: routes know HTTP, services know business rules, repositories know SQL. Only `server.mjs` touches the process and the real database file.
 
----
+## API
 
-## Users
+All error responses share one shape:
 
-### Get All Users
-- **URL**: `/users/all`
-- **Method**: `GET`
-- **Description**: Retrieves all registered users.
+```json
+{ "error": "Unauthorized", "message": "Human-readable explanation." }
+```
 
----
+Validation errors (`400`) additionally include `details: [{ field, message }]`.
 
-### Remove All Users
-- **URL**: `/users/remove-all`
-- **Method**: `DELETE`
-- **Description**: Deletes all users from the system.
+### Auth
 
----
+| Method | Path                   | Auth   | Success | Description                                  |
+| ------ | ---------------------- | ------ | ------- | -------------------------------------------- |
+| POST   | `/auth/register`       | —      | `201`   | Create a user; returns `{ message, token }`  |
+| POST   | `/auth/login`          | —      | `200`   | Returns `{ message, token }`                 |
+| POST   | `/auth/check-email`    | —      | `200`   | Returns `{ exists, message }`                |
+| POST   | `/auth/validate-token` | Bearer | `200`   | Verifies the token and returns a renewed one |
 
-## Postman Collection
-- **File**: `tools/node-jwt.postman_collection.json`
-- **Import Steps**:
-  1. Open Postman.
-  2. Click **Import** > **Upload Files**.
-  3. Select `tools/postman.json`.
+Request body for `register` / `login`:
 
----
+```json
+{ "email": "user@example.com", "password": "at least 6 characters" }
+```
+
+Error codes: `400` invalid payload · `401` invalid credentials / bad token (`error` is `Token Expired` for expired tokens) · `409` email already registered.
+
+### Users
+
+| Method | Path                | Auth   | Description                                        |
+| ------ | ------------------- | ------ | -------------------------------------------------- |
+| GET    | `/users/me`         | Bearer | Current user `{ id, email, username }`             |
+| GET    | `/users/all`        | —      | All users (no password hashes)                     |
+| DELETE | `/users/remove-all` | —      | Deletes every user (development helper)            |
+| GET    | `/protected`        | Bearer | Demo protected route; returns `{ message, users }` |
+
+### Health
+
+`GET /health` → `{ status: "ok", uptime, timestamp }` (also checks the database).
+
+## Tokens
+
+Tokens are HS256 JWTs signed with the secret from the config module, with `sub` = user id, `email`, `iat` and `exp`.
+Send them as `Authorization: Bearer <token>`.
+
+## Manual testing
+
+- [`auth.http`](auth.http) — request collection for the JetBrains HTTP client / VS Code REST Client. Run "Auth - Register" first; it stores the credentials and token.
+- [`tools/node-jwt.postman_collection.json`](tools/node-jwt.postman_collection.json) — Postman collection.
 
 ## Docker
 
-### Build Image
 ```bash
-docker build -t node-jwt-server-image -f docker/Dockerfile .
+docker build -t node-jwt-server -f docker/Dockerfile .
+docker run -d -p 3000:3000 -v "$PWD/database.db:/usr/app/database.db" \
+  --name node-jwt-server node-jwt-server
 ```
 
-### Run Container
-```bash
-docker run -d -p 3000:3000 --name node-jwt-server-container node-jwt-server-image
-```
-
-## Migration
-
-### make
-```bash
-npx knex --knexfile ./knexfile.cjs migrate:make create_users_table
-```
-
-### run
-```bash
-npx knex --knexfile ./knexfile.cjs migrate:latest
-```
+The image runs migrations on start and then launches the API.
