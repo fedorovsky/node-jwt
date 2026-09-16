@@ -1,0 +1,43 @@
+@host = http://localhost:3000
+
+### Auth - Register
+< {%
+    request.variables.set("email", `user${Math.floor(Math.random() * 10000)}@example.com`);
+    request.variables.set("password", "password_" + Date.now());
+
+    client.log("email = " + request.variables.get("email"));
+    client.log("password = " + request.variables.get("password"));
+%}
+
+POST {{host}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+> {%
+    client.global.set("email", request.variables.get("email"));
+    client.global.set("password", request.variables.get("password"));
+    client.global.set("token", response.body.token);
+%}
+
+### Auth - Login
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+> {%
+    client.global.set("token", response.body.token);
+%}
+
+### Users - Me
+GET {{host}}/users/me
+Authorization: Bearer {{token}}
+
+###
