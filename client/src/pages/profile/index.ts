@@ -1,1 +1,1 @@
-export { ProfileRoutes } from './profile-routes.tsx';
+export { ProfileRoutes } from './profile-routes';

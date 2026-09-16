@@ -1,55 +1,45 @@
-import { Button } from '@/shared/styled-system/components/ui/button';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/shared/styled-system/components/ui/table';
-import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '@/features/auth';
+import { ROUTES } from '@/shared/config/routes';
+import { PageTitle } from '@/shared/ui/page-title';
 
-type User = {
-  id: number;
-  email: string;
-  username: string;
-};
+const linkClassName = 'text-blue-500 hover:underline';
 
 export const HomePage = () => {
-  const [users, setUsers] = useState<User[]>([]);
-
-  const handleClick = async () => {
-    const response = await fetch('/api/users/all');
-    const data: User[] = await response.json();
-    setUsers(data);
-  };
+  const { isAuthenticated } = useAuth();
 
   return (
     <div>
-      <h1 className="mb-4 text-4xl font-bold leading-tight tracking-tight text-gray-800">
-        Home
-      </h1>
-      <Button onClick={handleClick}>/api/users/all</Button>
-      {users.length !== 0 && (
-        <Table className="mt-2">
-          <TableHeader>
-            <TableRow>
-              <TableHead>id</TableHead>
-              <TableHead>email</TableHead>
-              <TableHead>username</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {users.map(user => (
-              <TableRow key={user.id}>
-                <TableCell>{user.id}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>{user.username}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      )}
+      <PageTitle>Home</PageTitle>
+      <p className="text-gray-700">
+        A small React + Express playground for JWT authentication.
+      </p>
+      <p className="mt-2 text-gray-700">
+        {isAuthenticated ? (
+          <>
+            You are signed in. Browse the{' '}
+            <Link to={ROUTES.users} className={linkClassName}>
+              users list
+            </Link>{' '}
+            or open your{' '}
+            <Link to={ROUTES.profile} className={linkClassName}>
+              profile
+            </Link>
+            .
+          </>
+        ) : (
+          <>
+            <Link to={ROUTES.login} className={linkClassName}>
+              Log in
+            </Link>{' '}
+            or{' '}
+            <Link to={ROUTES.register} className={linkClassName}>
+              create an account
+            </Link>{' '}
+            to see protected pages.
+          </>
+        )}
+      </p>
     </div>
   );
 };

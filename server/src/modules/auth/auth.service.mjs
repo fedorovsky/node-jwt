@@ -44,10 +44,6 @@ export function createAuthService({ users, tokenService, bcryptSaltRounds }) {
       return { user, token };
     },
 
-    async isEmailRegistered(email) {
-      return users.existsByEmail(email);
-    },
-
     async refreshToken(user) {
       return tokenService.issueForUser(user);
     },

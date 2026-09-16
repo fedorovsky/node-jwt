@@ -1,23 +1,15 @@
-import { Routes, Route } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { ProtectedRoute } from '@/features/auth';
-import { ProfilePage } from './profile-page.tsx';
-import { ProfileViewPage } from './profile-view-page.tsx';
-import { ProfileEditPage } from './profile-edit-page.tsx';
+import { ROUTES } from '@/shared/config/routes';
+import { ProfileEditPage } from './profile-edit-page';
+import { ProfileViewPage } from './profile-view-page';
 
-export const ProfileRoutes = () => {
-  return (
+export const ProfileRoutes = () => (
+  <ProtectedRoute>
     <Routes>
-      <Route
-        path="/"
-        element={
-          <ProtectedRoute>
-            <ProfilePage />
-          </ProtectedRoute>
-        }
-      >
-        <Route path="view" element={<ProfileViewPage />} />
-        <Route path="edit" element={<ProfileEditPage />} />
-      </Route>
+      <Route path="view" element={<ProfileViewPage />} />
+      <Route path="edit" element={<ProfileEditPage />} />
+      <Route path="*" element={<Navigate to={ROUTES.profile} replace />} />
     </Routes>
-  );
-};
+  </ProtectedRoute>
+);

@@ -1,10 +1,8 @@
-export const Footer = () => {
-  return (
-    <div className="container mx-auto text-center">
-      <p className="text-sm">HASH: {import.meta.env.VITE_GIT_COMMIT_HASH}</p>
-      <p className="text-sm">
-        © {new Date().getFullYear()} My Website. All rights reserved.
-      </p>
-    </div>
-  );
-};
+const buildHash = import.meta.env.VITE_GIT_COMMIT_HASH ?? 'unknown';
+
+export const Footer = () => (
+  <div className="container mx-auto text-center text-sm">
+    <p>Build: {buildHash}</p>
+    <p>© {new Date().getFullYear()} node-jwt</p>
+  </div>
+);

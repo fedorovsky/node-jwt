@@ -1,25 +1,30 @@
-import * as React from 'react';
-import { Navigate } from 'react-router-dom';
-import { selectIsAuthenticated, selectIsAuthChecked } from '../redux/selectors';
-import { useAppSelector } from '@/shared/hooks/use-app-selector.ts';
+import type { PropsWithChildren } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
+import { ROUTES } from '@/shared/config/routes';
+import { useAuth } from '../hooks/use-auth';
 
-interface ProtectedRouteProps extends React.PropsWithChildren {
+interface ProtectedRouteProps extends PropsWithChildren {
   redirectTo?: string;
 }
 
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+/**
+ * Renders children only for an authenticated user. While the stored session
+ * is still being verified nothing is decided yet, so a neutral placeholder is
+ * shown instead of a premature redirect.
+ */
+export const ProtectedRoute = ({
   children,
-  redirectTo = '/auth/login',
-}) => {
-  const isAuthenticated = useAppSelector(selectIsAuthenticated);
-  const isAuthChecked = useAppSelector(selectIsAuthChecked);
+  redirectTo = ROUTES.login,
+}: ProtectedRouteProps) => {
+  const { isAuthenticated, isSessionChecked } = useAuth();
+  const location = useLocation();
 
-  if (!isAuthChecked) {
-    return <h1>ProtectedRoute ...</h1>;
+  if (!isSessionChecked) {
+    return <p className="text-sm text-muted-foreground">Checking session…</p>;
   }
 
   if (!isAuthenticated) {
-    return <Navigate to={redirectTo} />;
+    return <Navigate to={redirectTo} replace state={{ from: location }} />;
   }
 
   return children;

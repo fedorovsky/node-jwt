@@ -44,6 +44,11 @@ export function createUsersRepository(db) {
       return { id, email, username };
     },
 
+    async updateById(id, patch) {
+      await table().where({ id }).update(patch);
+      return this.findById(id);
+    },
+
     deleteAll() {
       return table().del();
     },

@@ -9,6 +9,11 @@ export function createUsersController({ users }) {
       res.status(200).json({ id, email, username });
     },
 
+    async updateMe(req, res) {
+      const updated = await users.updateById(req.user.id, req.body);
+      res.status(200).json(updated);
+    },
+
     async removeAll(_req, res) {
       const deleted = await users.deleteAll();
       res.status(200).json({

@@ -1,34 +1,22 @@
-# Base image
-FROM node:20 AS build
+# --- Build stage ------------------------------------------------------------
+FROM node:20-alpine AS build
 
-# Set build argument
-ARG GIT_COMMIT_HASH
-
-# Set GIT_COMMIT_HASH as an environment variable
+ARG GIT_COMMIT_HASH=unknown
 ENV VITE_GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
 
-# Set working directory
 WORKDIR /app
 
-# Copy and install dependencies
 COPY package.json package-lock.json ./
-RUN npm install
+RUN npm ci
 
-# Copy the rest of the app's files
 COPY . .
-
-# Build the client
 RUN npm run build
 
-# Serve the built client with a lightweight HTTP server
-FROM nginx:1.21
+# --- Runtime stage ----------------------------------------------------------
+FROM nginx:1.27-alpine
+
 COPY --from=build /app/dist /usr/share/nginx/html
+COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
 
-# Copy custom Nginx configuration
-COPY ./docker/nginx.conf /etc/nginx/conf.d/default.conf
-
-# Expose port 80 for the client
 EXPOSE 80
-
-# Start the Nginx server
 CMD ["nginx", "-g", "daemon off;"]

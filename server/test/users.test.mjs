@@ -82,3 +82,71 @@ describe('users', () => {
     assert.equal(res.headers.get('x-content-type-options'), 'nosniff');
   });
 });
+
+describe('users · update profile', () => {
+  let api, close;
+  const password = 'Sup3r-secret';
+
+  const registerUser = async () => {
+    const email = uniqueEmail();
+    const res = await api('POST', '/auth/register', {
+      body: { email, password },
+    });
+    return { email, token: res.body.token };
+  };
+
+  before(async () => ({ api, close } = await startTestServer()));
+  after(() => close());
+
+  test('PATCH /users/me changes the username', async () => {
+    const { email, token } = await registerUser();
+    const res = await api('PATCH', '/users/me', {
+      token,
+      body: { username: '  New.Name_42  ' },
+    });
+    assert.equal(res.status, 200);
+    assert.equal(res.body.username, 'New.Name_42');
+    assert.equal(res.body.email, email);
+    assert.equal(res.body.password, undefined);
+
+    const me = await api('GET', '/users/me', { token });
+    assert.equal(me.body.username, 'New.Name_42');
+  });
+
+  test('PATCH /users/me validates the username', async () => {
+    const { token } = await registerUser();
+    for (const username of ['ab', 'has space', 'x'.repeat(33), 'bad$char']) {
+      const res = await api('PATCH', '/users/me', {
+        token,
+        body: { username },
+      });
+      assert.equal(
+        res.status,
+        400,
+        `expected 400 for ${JSON.stringify(username)}`,
+      );
+      assert.equal(res.body.details[0].field, 'username');
+    }
+  });
+
+  test('PATCH /users/me rejects an empty body and ignores unknown fields', async () => {
+    const { email, token } = await registerUser();
+    const empty = await api('PATCH', '/users/me', { token, body: {} });
+    assert.equal(empty.status, 400);
+    assert.equal(empty.body.message, 'Nothing to update');
+
+    const sneaky = await api('PATCH', '/users/me', {
+      token,
+      body: { email: 'other@example.com', username: 'legit_name' },
+    });
+    assert.equal(sneaky.status, 200);
+    assert.equal(sneaky.body.email, email);
+  });
+
+  test('PATCH /users/me requires authentication', async () => {
+    const res = await api('PATCH', '/users/me', {
+      body: { username: 'nope_1' },
+    });
+    assert.equal(res.status, 401);
+  });
+});

@@ -1,15 +1,11 @@
-import { Routes, Route } from 'react-router-dom';
-import { AuthLoginPage } from './auth-login-page';
-import { AuthRegisterPage } from './auth-register-page.tsx';
-import { AuthPage } from './auth-page.tsx';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { Login, Register } from '@/features/auth';
+import { ROUTES } from '@/shared/config/routes';
 
-export const AuthRoutes = () => {
-  return (
-    <Routes>
-      <Route path="/" element={<AuthPage />}>
-        <Route path="login" element={<AuthLoginPage />} />
-        <Route path="register" element={<AuthRegisterPage />} />
-      </Route>
-    </Routes>
-  );
-};
+export const AuthRoutes = () => (
+  <Routes>
+    <Route path="login" element={<Login />} />
+    <Route path="register" element={<Register />} />
+    <Route path="*" element={<Navigate to={ROUTES.login} replace />} />
+  </Routes>
+);

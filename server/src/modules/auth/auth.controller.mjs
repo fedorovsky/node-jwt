@@ -12,14 +12,6 @@ export function createAuthController({ authService, tokenService, users }) {
       res.status(200).json({ message: 'Login successful', token });
     },
 
-    async checkEmail(req, res) {
-      const exists = await authService.isEmailRegistered(req.body.email);
-      res.status(200).json({
-        exists,
-        message: exists ? 'Email is already registered' : 'Email is available',
-      });
-    },
-
     async validateToken(req, res) {
       const user = await resolveUserFromRequest(req, { tokenService, users });
       const token = await authService.refreshToken(user);

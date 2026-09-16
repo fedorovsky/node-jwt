@@ -1,96 +1,66 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { delay } from '@/shared/utils/delay.ts';
+import { rootApi } from '@/shared/api/root-api';
+import { tokenStorage } from '@/shared/lib/token-storage';
+import { getErrorMessage } from '@/shared/lib/get-error-message';
+import { authApi, type Credentials } from '../api/auth-api';
 
-interface RegisterResponse {
-  message: string;
-  token: string;
-}
+type ThunkConfig = { rejectValue: string };
 
-export const register = createAsyncThunk(
+/**
+ * Every thunk resolves with the token to keep in memory and persists it to
+ * storage as a side effect. Signing in resets cached API data so nothing from
+ * a previous session leaks through; this is safe there because no protected
+ * component is mounted yet. Logout deliberately does not reset the cache:
+ * subscribed components would refetch without a token and produce 401s.
+ * Entries simply expire once the protected pages unmount.
+ */
+export const register = createAsyncThunk<string, Credentials, ThunkConfig>(
   'auth/register',
-  async (data: { email: string; password: string }, { rejectWithValue }) => {
+  async (credentials, { dispatch, rejectWithValue }) => {
     try {
-      const response = await axios.post<RegisterResponse>(
-        '/api/auth/register',
-        data,
-      );
-      localStorage.setItem('token', response.data.token);
-
-      return {
-        token: response.data.token,
-      };
-    } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data?.message || 'Registration failed.',
-      );
+      const token = await authApi.register(credentials);
+      tokenStorage.set(token);
+      dispatch(rootApi.util.resetApiState());
+      return token;
+    } catch (error) {
+      return rejectWithValue(getErrorMessage(error, 'Registration failed.'));
     }
   },
 );
 
-interface LoginResponse {
-  message: string;
-  token: string;
-}
-
-export const login = createAsyncThunk(
+export const login = createAsyncThunk<string, Credentials, ThunkConfig>(
   'auth/login',
-  async (data: { email: string; password: string }, { rejectWithValue }) => {
+  async (credentials, { dispatch, rejectWithValue }) => {
     try {
-      const response = await axios.post<LoginResponse>('/api/auth/login', data);
-      localStorage.setItem('token', response.data.token);
-
-      return {
-        token: response.data.token,
-      };
-    } catch (error: any) {
-      localStorage.removeItem('token');
-      return rejectWithValue(error.response?.data?.message || 'Login failed.');
+      const token = await authApi.login(credentials);
+      tokenStorage.set(token);
+      dispatch(rootApi.util.resetApiState());
+      return token;
+    } catch (error) {
+      tokenStorage.clear();
+      return rejectWithValue(getErrorMessage(error, 'Login failed.'));
     }
   },
 );
 
-export const logout = createAsyncThunk(
-  'auth/logout',
-  async (_, { rejectWithValue }) => {
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+export const logout = createAsyncThunk<void, void>('auth/logout', () => {
+  tokenStorage.clear();
+});
 
-      localStorage.removeItem('token');
-      return 'Logout successful.';
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Logout failed.');
-    }
-  },
-);
-
-export const validateToken = createAsyncThunk(
+/** Restores the session on app start: verifies the stored token and renews it. */
+export const validateToken = createAsyncThunk<string, void, ThunkConfig>(
   'auth/validateToken',
   async (_, { rejectWithValue }) => {
-    const token = localStorage.getItem('token');
-
-    if (!token) {
-      return rejectWithValue('No token found.');
-    }
+    const token = tokenStorage.get();
+    if (!token) return rejectWithValue('No stored session.');
 
     try {
-      const response = await axios.post<{ token: string }>(
-        '/api/auth/validate-token',
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-      await delay(2000);
-      localStorage.setItem('token', response.data.token); // Перезаписываем продленый токен
-      return { token: response.data.token };
-    } catch (error: any) {
-      localStorage.removeItem('token'); // Удаляем недействительный токен
-      return rejectWithValue(
-        error.response?.data?.message || 'Token validation failed.',
-      );
+      const renewed = await authApi.validateToken(token);
+      tokenStorage.set(renewed);
+      return renewed;
+    } catch (error) {
+      tokenStorage.clear();
+      return rejectWithValue(getErrorMessage(error, 'Session expired.'));
     }
   },
 );

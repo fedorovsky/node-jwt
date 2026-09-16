@@ -1,77 +1,55 @@
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { useAuth } from '@/features/auth';
+import { ROUTES } from '@/shared/config/routes';
+import { Button } from '@/shared/styled-system/components/ui/button';
+import { cn } from '@/shared/styled-system/lib/utils';
 import { UserInfo } from './user-info';
 
+interface NavItem {
+  to: string;
+  label: string;
+}
+
+const publicLinks: NavItem[] = [{ to: ROUTES.home, label: 'Home' }];
+const privateLinks: NavItem[] = [
+  { to: ROUTES.users, label: 'Users' },
+  { to: ROUTES.profile, label: 'Profile' },
+];
+const guestLinks: NavItem[] = [
+  { to: ROUTES.login, label: 'Login' },
+  { to: ROUTES.register, label: 'Register' },
+];
+
+const linkClassName = ({ isActive }: { isActive: boolean }) =>
+  cn('hover:text-gray-300', isActive && 'font-semibold underline');
+
 export const Header = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, signOut } = useAuth();
+  const links = [
+    ...publicLinks,
+    ...(isAuthenticated ? privateLinks : guestLinks),
+  ];
 
   return (
     <nav className="container mx-auto flex items-center justify-between p-4">
-      <ul className="flex space-x-4">
-        <li>
-          <Link to="/" className="text-white hover:text-gray-400">
-            Home
-          </Link>
-        </li>
-        {isAuthenticated && (
-          <li>
-            <Link to="/profile" className="text-white hover:text-gray-400">
-              Profile
-            </Link>
-            <ul className="ml-4 mt-2 space-y-2">
-              <li>
-                <Link
-                  to="/profile/view"
-                  className="text-gray-300 hover:text-white"
-                >
-                  Profile - View
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/profile/edit"
-                  className="text-gray-300 hover:text-white"
-                >
-                  Profile - Edit
-                </Link>
-              </li>
-            </ul>
+      <ul className="flex items-center gap-4">
+        {links.map(({ to, label }) => (
+          <li key={to}>
+            <NavLink to={to} className={linkClassName}>
+              {label}
+            </NavLink>
           </li>
-        )}
-        <li>
-          <Link to="/users" className="text-white hover:text-gray-400">
-            Users
-          </Link>
-          <ul className="ml-4 mt-2 space-y-2">
-            <li>
-              <Link to="/users/list" className="text-gray-300 hover:text-white">
-                Users - List
-              </Link>
-            </li>
-          </ul>
-        </li>
-        <li>
-          <Link to="/auth" className="text-white hover:text-gray-400">
-            Auth
-          </Link>
-          <ul className="ml-4 mt-2 space-y-2">
-            <li>
-              <Link to="/auth/login" className="text-gray-300 hover:text-white">
-                Auth - Login
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/auth/register"
-                className="text-gray-300 hover:text-white"
-              >
-                Auth - Register
-              </Link>
-            </li>
-          </ul>
-        </li>
+        ))}
       </ul>
-      <UserInfo />
+
+      {isAuthenticated && (
+        <div className="flex items-center gap-4">
+          <UserInfo />
+          <Button variant="secondary" size="sm" onClick={() => signOut()}>
+            Logout
+          </Button>
+        </div>
+      )}
     </nav>
   );
 };

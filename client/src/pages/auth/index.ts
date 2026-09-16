@@ -1,1 +1,1 @@
-export { AuthRoutes } from './auth-routes.tsx';
+export { AuthRoutes } from './auth-routes';

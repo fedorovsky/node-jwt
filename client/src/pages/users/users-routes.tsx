@@ -1,22 +1,13 @@
-import { Routes, Route } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { ProtectedRoute } from '@/features/auth';
-import { UsersPage } from './users-page.tsx';
-import { UsersListPage } from './users-list-page.tsx';
+import { ROUTES } from '@/shared/config/routes';
+import { UsersListPage } from './users-list-page';
 
-export const UsersRoutes = () => {
-  return (
+export const UsersRoutes = () => (
+  <ProtectedRoute>
     <Routes>
-      <Route path="/" element={<UsersPage />}>
-        <Route
-          path="list"
-          element={
-            <ProtectedRoute>
-              <UsersListPage />
-            </ProtectedRoute>
-          }
-        />
-        {/*<Route path="second" element={<Second />} />*/}
-      </Route>
+      <Route path="list" element={<UsersListPage />} />
+      <Route path="*" element={<Navigate to={ROUTES.users} replace />} />
     </Routes>
-  );
-};
+  </ProtectedRoute>
+);

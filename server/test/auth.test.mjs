@@ -91,24 +91,6 @@ describe('auth', () => {
     assert.equal(wrong.body.message, 'Invalid credentials');
   });
 
-  test('reports whether an email is registered', async () => {
-    const email = uniqueEmail();
-    const before = await api('POST', '/auth/check-email', { body: { email } });
-    assert.equal(before.status, 200);
-    assert.deepEqual(before.body, {
-      exists: false,
-      message: 'Email is available',
-    });
-
-    await api('POST', '/auth/register', { body: { email, password } });
-
-    const after = await api('POST', '/auth/check-email', { body: { email } });
-    assert.deepEqual(after.body, {
-      exists: true,
-      message: 'Email is already registered',
-    });
-  });
-
   test('validate-token renews a valid token', async () => {
     const { body } = await api('POST', '/auth/register', {
       body: { email: uniqueEmail(), password },

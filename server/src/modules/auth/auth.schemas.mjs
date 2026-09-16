@@ -25,7 +25,3 @@ export const credentialsSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
 });
-
-export const emailOnlySchema = z.object({
-  email: emailSchema,
-});

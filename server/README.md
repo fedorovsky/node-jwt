@@ -63,7 +63,6 @@ Validation errors (`400`) additionally include `details: [{ field, message }]`.
 | ------ | ---------------------- | ------ | ------- | -------------------------------------------- |
 | POST   | `/auth/register`       | —      | `201`   | Create a user; returns `{ message, token }`  |
 | POST   | `/auth/login`          | —      | `200`   | Returns `{ message, token }`                 |
-| POST   | `/auth/check-email`    | —      | `200`   | Returns `{ exists, message }`                |
 | POST   | `/auth/validate-token` | Bearer | `200`   | Verifies the token and returns a renewed one |
 
 Request body for `register` / `login`:
@@ -76,12 +75,13 @@ Error codes: `400` invalid payload · `401` invalid credentials / bad token (`er
 
 ### Users
 
-| Method | Path                | Auth   | Description                                        |
-| ------ | ------------------- | ------ | -------------------------------------------------- |
-| GET    | `/users/me`         | Bearer | Current user `{ id, email, username }`             |
-| GET    | `/users/all`        | —      | All users (no password hashes)                     |
-| DELETE | `/users/remove-all` | —      | Deletes every user (development helper)            |
-| GET    | `/protected`        | Bearer | Demo protected route; returns `{ message, users }` |
+| Method | Path                | Auth   | Description                                               |
+| ------ | ------------------- | ------ | --------------------------------------------------------- |
+| GET    | `/users/me`         | Bearer | Current user `{ id, email, username }`                    |
+| PATCH  | `/users/me`         | Bearer | Update own profile; body `{ username }`; returns the user |
+| GET    | `/users/all`        | —      | All users (no password hashes)                            |
+| DELETE | `/users/remove-all` | —      | Deletes every user (development helper)                   |
+| GET    | `/protected`        | Bearer | Demo protected route; returns `{ message, users }`        |
 
 ### Health
 

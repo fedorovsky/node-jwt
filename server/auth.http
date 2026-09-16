@@ -67,14 +67,6 @@ Content-Type: application/json
   "password": "wrong-password"
 }
 
-### Auth - Check email
-POST {{host}}/auth/check-email
-Content-Type: application/json
-
-{
-  "email": "{{email}}"
-}
-
 ### Auth - Validate & renew token
 POST {{host}}/auth/validate-token
 Authorization: Bearer {{token}}
@@ -86,6 +78,24 @@ Authorization: Bearer {{token}}
 ### Users - Me (protected)
 GET {{host}}/users/me
 Authorization: Bearer {{token}}
+
+### Users - Update my username
+PATCH {{host}}/users/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "username": "renamed_user"
+}
+
+### Users - Update with invalid username (→ 400)
+PATCH {{host}}/users/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "username": "x"
+}
 
 ### Users - Me without token (→ 401)
 GET {{host}}/users/me

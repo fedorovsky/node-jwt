@@ -106,41 +106,6 @@
 			"response": []
 		},
 		{
-			"name": "Auth - Check Email",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"email\": \"user2283@example.com\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:3000/auth/check-email",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"auth",
-						"check-email"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "Users - Me",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true

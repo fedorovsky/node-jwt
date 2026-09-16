@@ -1,26 +1,23 @@
-import { rootApi, ApiTags } from '@/shared/api/root-api.ts';
+import { rootApi, ApiTags } from '@/shared/api/root-api';
+import type { User } from '@/shared/types/user';
 
-type User = {
-  id: number;
-  email: string;
+export interface UpdateProfileInput {
   username: string;
-};
+}
 
-export const userApi = rootApi.injectEndpoints({
+export const profileApi = rootApi.injectEndpoints({
   endpoints: builder => ({
     fetchMyProfile: builder.query<User, void>({
       query: () => '/users/me',
-      providesTags: [ApiTags.Users],
+      providesTags: [ApiTags.Profile],
     }),
-    addUser: builder.mutation({
-      query: newUser => ({
-        url: '/users',
-        method: 'POST',
-        body: newUser,
-      }),
-      invalidatesTags: [ApiTags.Profile],
+    updateMyProfile: builder.mutation<User, UpdateProfileInput>({
+      query: body => ({ url: '/users/me', method: 'PATCH', body }),
+      // The users list shows usernames too, so refresh both.
+      invalidatesTags: [ApiTags.Profile, ApiTags.Users],
     }),
   }),
 });
 
-export const { useFetchMyProfileQuery } = userApi;
+export const { useFetchMyProfileQuery, useUpdateMyProfileMutation } =
+  profileApi;

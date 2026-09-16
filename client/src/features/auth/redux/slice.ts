@@ -1,107 +1,96 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { register, login, logout, validateToken } from './thunks';
+import { createSlice, isAnyOf } from '@reduxjs/toolkit';
+import { login, logout, register, validateToken } from './thunks';
 
-interface AuthState {
+export interface AuthState {
+  /** True once the stored token has been checked, whatever the outcome. */
+  isSessionChecked: boolean;
   isAuthenticated: boolean;
-  isAuthChecked: boolean;
   token: string | null;
-  loading: boolean;
+  isLoading: boolean;
   error: string | null;
 }
 
 const initialState: AuthState = {
+  isSessionChecked: false,
   isAuthenticated: false,
-  isAuthChecked: false, // Изначально проверка токена не завершена
   token: null,
-  loading: false,
+  isLoading: false,
   error: null,
+};
+
+const signIn = (state: AuthState, token: string) => {
+  state.isAuthenticated = true;
+  state.token = token;
+  state.error = null;
+};
+
+const signOut = (state: AuthState, error: string | null = null) => {
+  state.isAuthenticated = false;
+  state.token = null;
+  state.error = error;
 };
 
 const authSlice = createSlice({
   name: 'auth',
   initialState,
-  reducers: {},
+  reducers: {
+    clearError(state) {
+      state.error = null;
+    },
+  },
   extraReducers: builder => {
-    /**
-     * Register
-     */
-    builder.addCase(register.pending, state => {
-      state.loading = true;
-      state.error = null;
-    });
-    builder.addCase(
-      register.fulfilled,
-      (state, action: PayloadAction<{ token: string }>) => {
-        state.loading = false;
-        state.isAuthenticated = true;
-        state.token = action.payload.token;
-      },
-    );
-    builder.addCase(register.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload as string;
-    });
-    /**
-     * Login
-     */
-    builder.addCase(login.pending, state => {
-      state.loading = true;
-      state.error = null;
-    });
-    builder.addCase(
-      login.fulfilled,
-      (state, action: PayloadAction<{ token: string }>) => {
-        state.loading = false;
-        state.isAuthenticated = true;
-        state.token = action.payload.token;
-      },
-    );
-    builder.addCase(login.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload as string;
-      state.token = null;
-    });
-    /**
-     * Logout
-     */
-    builder.addCase(logout.pending, state => {
-      state.loading = true;
-      state.error = null;
-    });
-    builder.addCase(logout.fulfilled, state => {
-      state.loading = false;
-      state.isAuthenticated = false;
-      state.token = null;
-    });
-    builder.addCase(logout.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload as string;
-    });
-    /**
-     * Validate Token
-     */
-    builder.addCase(validateToken.pending, state => {
-      state.loading = true;
-      state.error = null;
-      state.isAuthChecked = false; // Пока токен не проверен
-    });
-    builder.addCase(
-      validateToken.fulfilled,
-      (state, action: PayloadAction<{ token: string }>) => {
-        state.loading = false;
-        state.isAuthenticated = true;
-        state.token = action.payload.token;
-        state.isAuthChecked = true; // Проверка завершена, токен валиден
-      },
-    );
-    builder.addCase(validateToken.rejected, (state, action) => {
-      state.loading = false;
-      state.isAuthenticated = false;
-      state.token = null;
-      state.error = action.payload as string;
-      state.isAuthChecked = true; // Проверка завершена, токен не валиден
-    });
+    builder
+      .addCase(register.fulfilled, (state, { payload }) =>
+        signIn(state, payload),
+      )
+      .addCase(login.fulfilled, (state, { payload }) => signIn(state, payload))
+      .addCase(login.rejected, (state, { payload }) => signOut(state, payload))
+      .addCase(logout.fulfilled, state => signOut(state))
+      .addCase(validateToken.fulfilled, (state, { payload }) => {
+        signIn(state, payload);
+        state.isSessionChecked = true;
+      })
+      .addCase(validateToken.rejected, (state, { payload }) => {
+        // A missing token is the normal signed-out state, not an error to show.
+        signOut(state, payload === 'No stored session.' ? null : payload);
+        state.isSessionChecked = true;
+      })
+      .addMatcher(
+        isAnyOf(
+          register.pending,
+          login.pending,
+          logout.pending,
+          validateToken.pending,
+        ),
+        state => {
+          state.isLoading = true;
+          state.error = null;
+        },
+      )
+      .addMatcher(
+        isAnyOf(
+          register.fulfilled,
+          register.rejected,
+          login.fulfilled,
+          login.rejected,
+          logout.fulfilled,
+          logout.rejected,
+          validateToken.fulfilled,
+          validateToken.rejected,
+        ),
+        state => {
+          state.isLoading = false;
+        },
+      )
+      .addMatcher(
+        isAnyOf(register.rejected, logout.rejected),
+        (state, { payload, error }) => {
+          state.error =
+            typeof payload === 'string' ? payload : (error.message ?? null);
+        },
+      );
   },
 });
 
-export const { name, actions, reducer } = authSlice;
+export const { name, reducer } = authSlice;
+export const { clearError } = authSlice.actions;

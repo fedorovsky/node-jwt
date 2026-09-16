@@ -1,13 +1,11 @@
-import React from 'react';
-import { RouterProvider } from '@/app/providers/router-provider.tsx';
-import { ReduxProvider } from '@/app/providers/redux-provider.tsx';
+import { StrictMode } from 'react';
+import { ReduxProvider } from './providers/redux-provider';
+import { RouterProvider } from './providers/router-provider';
 
-export function App() {
-  return (
-    <React.StrictMode>
-      <ReduxProvider>
-        <RouterProvider />
-      </ReduxProvider>
-    </React.StrictMode>
-  );
-}
+export const App = () => (
+  <StrictMode>
+    <ReduxProvider>
+      <RouterProvider />
+    </ReduxProvider>
+  </StrictMode>
+);

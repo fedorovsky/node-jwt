@@ -1,22 +1,22 @@
 import { Link } from 'react-router-dom';
-import { useAuth } from '@/features/auth';
-import { useFetchMyProfileQuery } from '@/features/profile/api/profile-api.ts';
+import { useFetchMyProfileQuery } from '@/features/profile';
+import { ROUTES } from '@/shared/config/routes';
 
+/** Current user's initial and name; rendered only for authenticated users. */
 export const UserInfo = () => {
-  const { isAuthenticated } = useAuth();
+  const { data: profile } = useFetchMyProfileQuery();
 
-  const { data } = useFetchMyProfileQuery(undefined, {
-    skip: !isAuthenticated,
-  });
+  if (!profile) return null;
 
-  return isAuthenticated ? (
-    <Link to="/profile/view" className="flex items-center space-x-2">
-      <img
-        src="https://avatar.iran.liara.run/public"
-        alt="User Avatar"
-        className="h-10 w-10 rounded-full"
-      />
-      <span className="text-white">{data?.username}</span>
+  return (
+    <Link to={ROUTES.profile} className="flex items-center gap-2">
+      <span
+        aria-hidden
+        className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-sm font-semibold uppercase text-secondary-foreground"
+      >
+        {profile.username.charAt(0)}
+      </span>
+      <span>{profile.username}</span>
     </Link>
-  ) : null;
+  );
 };
