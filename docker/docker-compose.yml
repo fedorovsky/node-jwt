@@ -19,7 +19,7 @@ services:
     environment:
       - PORT=3000
     volumes:
-      - ../database.db:/usr/app/database.db:delegated
+      - ../database.db:/usr/app/database.db
 
   sqlite-viewer:
     image: coleifer/sqlite-web
