@@ -34,9 +34,23 @@ Before building and running the Docker container, you need to manually create a 
 Example: `touch database.db` in the root directory of the project.
 This step ensures that the Docker volume correctly maps to the file system and the application can access the database.
 
+## Checking the Work
 
-## Checking the Work:
+### Docker Compose
 
-- The client will be available at [http://localhost:7373](http://localhost:7373)  
-- The server will be available at [http://localhost:3000](http://localhost:3000)
-- The SQLite Viewer will be available at [http://localhost:8081](http://localhost:8081)
+After `docker compose -f docker/docker-compose.yml up` the services are published on these host ports:
+
+| Service       | Address                                          | Notes                                                                                   |
+|---------------|--------------------------------------------------|-----------------------------------------------------------------------------------------|
+| Client        | [http://localhost:1001](http://localhost:1001)   | nginx serving the React build; requests to `/api/*` are proxied to the server container |
+| Server (API)  | [http://localhost:1002](http://localhost:1002)   | Express API directly, e.g. `http://localhost:1002/health`                               |
+| SQLite Viewer | [http://localhost:1003](http://localhost:1003)   | `sqlite-web` over the shared `database.db`                                              |
+
+Inside the Compose network the client reaches the API as `http://server:3000`; the API is also available through the client at `http://localhost:1001/api/...` (the `/api` prefix is stripped by nginx).
+
+### Development (`npm start`)
+
+| Service      | Address                                        | Notes                                                        |
+|--------------|------------------------------------------------|--------------------------------------------------------------|
+| Client       | [http://localhost:5173](http://localhost:5173) | Vite dev server; `/api/*` is proxied to the server            |
+| Server (API) | [http://localhost:3000](http://localhost:3000) | Express with `node --watch`, e.g. `http://localhost:3000/health` |
